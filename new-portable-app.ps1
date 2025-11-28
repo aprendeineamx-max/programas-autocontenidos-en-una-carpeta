@@ -15,8 +15,18 @@ $defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
-$form.Size = New-Object System.Drawing.Size(620,320)
+$form.Size = New-Object System.Drawing.Size(680,360)
 $form.StartPosition = "CenterScreen"
+$form.FormBorderStyle = 'FixedDialog'
+$form.MaximizeBox = $false
+$form.MinimizeBox = $false
+
+$title = New-Object System.Windows.Forms.Label
+$title.Text = "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..."
+$title.Location = New-Object System.Drawing.Point(10,10)
+$title.AutoSize = $true
+$title.MaximumSize = New-Object System.Drawing.Size(650,0)
+$title.Font = New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Bold)
 
 function New-Label($text, $x, $y) {
     $lbl = New-Object System.Windows.Forms.Label
@@ -32,37 +42,38 @@ function New-Textbox($x,$y,$w) {
     return $tb
 }
 
-$lblName = New-Label "Nombre de la app (sin espacios raros):" 10 15
-$txtName = New-Textbox 250 12 330
+$lblName = New-Label "Nombre de la app (ID):" 10 60
+$txtName = New-Textbox 250 57 330
 
-$lblInstaller = New-Label "Instalador (.exe) a importar:" 10 45
-$txtInstaller = New-Textbox 250 42 240
+$lblInstaller = New-Label "Instalador (.exe) a importar:" 10 90
+$txtInstaller = New-Textbox 250 87 240
 $btnInstaller = New-Object System.Windows.Forms.Button
 $btnInstaller.Text = "Examinar..."
-$btnInstaller.Location = New-Object System.Drawing.Point(500,40)
+$btnInstaller.Location = New-Object System.Drawing.Point(500,85)
 $btnInstaller.Width = 80
 
-$lblArgs = New-Label "Parámetros de instalador (/DIR={BIN} etc):" 10 75
-$txtArgs = New-Textbox 250 72 330
+$lblArgs = New-Label "Parámetros del instalador (/DIR={BIN} etc):" 10 120
+$txtArgs = New-Textbox 250 117 330
 $txtArgs.Text = $defaultArgs
 
-$lblExe = New-Label "Ejecutable relativo tras instalar (apps\<App>\bin\*.exe):" 10 105
-$txtExe = New-Textbox 250 102 330
+$lblExe = New-Label "Ejecutable relativo tras instalar (apps\\<App>\\bin\\*.exe):" 10 150
+$txtExe = New-Textbox 250 147 330
 
-$lblWD = New-Label "WorkingDir relativo (opcional):" 10 135
-$txtWD = New-Textbox 250 132 330
+$lblWD = New-Label "WorkingDir relativo (opcional):" 10 180
+$txtWD = New-Textbox 250 177 330
 
 $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Iniciar instalación portable"
-$btnStart.Location = New-Object System.Drawing.Point(370, 180)
+$btnStart.Location = New-Object System.Drawing.Point(400, 230)
 $btnStart.Width = 210
 
 $btnCancel = New-Object System.Windows.Forms.Button
 $btnCancel.Text = "Cancelar"
-$btnCancel.Location = New-Object System.Drawing.Point(260,180)
+$btnCancel.Location = New-Object System.Drawing.Point(290,230)
 $btnCancel.Width = 90
 
 $form.Controls.AddRange(@(
+    $title,
     $lblName,$txtName,
     $lblInstaller,$txtInstaller,$btnInstaller,
     $lblArgs,$txtArgs,
