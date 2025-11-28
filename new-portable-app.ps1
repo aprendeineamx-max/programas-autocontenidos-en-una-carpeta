@@ -81,7 +81,10 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
         $btn = New-Object System.Windows.Forms.Button
         $btn.Text = "Examinar..."
         $btn.Width = 100
-        $btn.Location = New-Object System.Drawing.Point($textBoxRef.Left + $textBoxRef.Width + 10, $textBoxRef.Top - 1)
+        $left = [int]$textBoxRef.Left
+        $width = [int]$textBoxRef.Width
+        $top = [int]$textBoxRef.Top
+        $btn.Location = New-Object System.Drawing.Point($left + $width + 10, $top - 1)
         $controls += $btn
     }
 
