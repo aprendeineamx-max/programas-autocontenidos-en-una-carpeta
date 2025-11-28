@@ -1,0 +1,236 @@
+﻿2025-11-28T05:10:13.176Z | INFO  | APP:START | === Booting Proton VPN 4.3.7 [Microsoft Windows NT 10.0.26100.0] X64 === | {"Caller":"Log4NetLogger..ctor:40"}
+2025-11-28T05:10:13.485Z | INFO  | APP | Reading global settings file 'C:\Users\Administrator\Desktop\Cambiar ubicacion de donde se guardan los datos de los programas\data\ProtonVPN\UserProfile\AppData\Local\Proton\Proton VPN\Storage\GlobalSettings.json'. | {"Caller":"GlobalSettingsFileReaderWriter.Read:52"}
+2025-11-28T05:10:13.485Z | INFO  | APP | Read 0 global settings from file 'C:\Users\Administrator\Desktop\Cambiar ubicacion de donde se guardan los datos de los programas\data\ProtonVPN\UserProfile\AppData\Local\Proton\Proton VPN\Storage\GlobalSettings.json'. | {"Caller":"GlobalSettingsFileReaderWriter.Read:56"}
+2025-11-28T05:10:13.534Z | INFO  | SETTINGS | Fetching feature flags | {"Caller":"FeatureFlagsObserver.UpdateFeatureFlagsAsync:107"}
+2025-11-28T05:10:13.608Z | INFO  | DNS | No fresh IP addresses for host 'vpn-api.proton.me' were found in the cache. Triggering a refresh. | {"Caller":"ARecordDnsManagerBase.ResolveOrGetFromCacheAsync:93"}
+2025-11-28T05:10:13.609Z | INFO  | DNS | Attempting a UDP DNS request for host 'vpn-api.proton.me'. | {"Caller":"DnsManager.ResolveDnsAsync:66"}
+2025-11-28T05:10:13.610Z | INFO  | DNS:RESOLVE | Attempting to resolve host 'vpn-api.proton.me'. | {"Caller":"DnsResolverBase.ResolveAsync:64"}
+2025-11-28T05:10:13.613Z | INFO  | DNS:NAME_SERVER | Getting name servers from available network interfaces. | {"Caller":"NameServersLoader.Get:45"}
+2025-11-28T05:10:13.649Z | INFO  | DNS:NAME_SERVER | Found 1 name servers. | {"Caller":"NameServersLoader.Get:61"}
+2025-11-28T05:10:13.651Z | INFO  | DNS:RESOLVE | Attempting to resolve host 'vpn-api.proton.me' through '108.61.10.10:53'. | {"Caller":"DnsOverUdpResolver.TryResolveAsync:84"}
+2025-11-28T05:10:13.660Z | INFO  | SETTINGS | Retrieving current device location | {"Caller":"DeviceLocationObserver.OnTriggerAsync:121"}
+2025-11-28T05:10:13.661Z | INFO  | APP | NetShield Stats - Request timeout set to 00:01:10.6703904. | {"Caller":"NetShieldStatsObserver..ctor:82"}
+2025-11-28T05:10:13.678Z | INFO  | DNS:RESPONSE | The endpoint '108.61.10.10:53' responded successfully to the DNS query of host 'vpn-api.proton.me'. | {"Caller":"DnsOverUdpResolver.ResolveAsync:122"}
+2025-11-28T05:10:13.681Z | INFO  | DNS:RESPONSE | 1 records were received for host 'vpn-api.proton.me' with DNS over UDP endpoint '108.61.10.10:53'. TTL is 580 seconds. | {"Caller":"DnsOverUdpResolver.ResolveAsync:129"}
+2025-11-28T05:10:13.687Z | INFO  | DNS:RESPONSE | Created DNS response entity for host 'vpn-api.proton.me' with 1 IP addresses and an expiration date in UTC of 28/11/2025 05:19:53 a. m. based on a TTL of 00:09:40. | {"Caller":"DnsResolverBase.CreateDnsResponseWithIpAddresses:182"}
+2025-11-28T05:10:13.690Z | INFO  | DNS:RESPONSE | Successfully resolved host 'vpn-api.proton.me'. | {"Caller":"DnsResolverBase.LogResult:81"}
+2025-11-28T05:10:13.690Z | INFO  | DNS | The UDP DNS request was successful for host 'vpn-api.proton.me'. Saving to cache. | {"Caller":"DnsManager.ResolveDnsAsync:71"}
+2025-11-28T05:10:13.709Z | INFO  | SETTINGS | Created the directory 'C:\Users\Administrator\Desktop\Cambiar ubicacion de donde se guardan los datos de los programas\data\ProtonVPN\UserProfile\AppData\Local\Proton\Proton VPN\Storage'. | {"Caller":"FileReaderWriter.CreateDirectory:151"}
+2025-11-28T05:10:13.727Z | INFO  | SETTINGS:CHANGED | Setting 'DnsCache' changed from 'null' to '32987Z","ExpirationDateTimeUtc":"2025-11-28T05:19:53.6832987Z"}}'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:10:13.731Z | INFO  | API:REQUEST | GET "https://185.159.159.148/feature/v2/frontend" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:10:13.731Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/location" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:10:14.284Z | INFO  | APP | Cache is empty, loading servers from file. | {"Caller":"ServersCache.LoadFromFileIfEmpty:150"}
+2025-11-28T05:10:14.285Z | INFO  | APP | Reading servers file. | {"Caller":"ServersFileReaderWriter.Read:54"}
+2025-11-28T05:10:14.286Z | ERROR | APP | Failed to read the file. | {"Caller":"UserFileReaderWriter.ReadOrNew:60"}
+    System.ArgumentNullException: Value cannot be null. (Parameter 'UserId')
+       at ProtonVPN.Client.Files.UserFileReaderWriter.GetFullFilePath(UserFileReaderWriterParameters parameters)
+       at ProtonVPN.Client.Files.UserFileReaderWriter.ReadOrNew[T](UserFileReaderWriterParameters parameters)
+2025-11-28T05:10:14.293Z | INFO  | APP | Read 0 servers from file. | {"Caller":"ServersFileReaderWriter.Read:56"}
+2025-11-28T05:10:14.296Z | INFO  | APP | Reading user settings file. | {"Caller":"UserSettingsFileReaderWriter.Read:52"}
+2025-11-28T05:10:14.296Z | ERROR | APP | Failed to read the file. | {"Caller":"UserFileReaderWriter.ReadOrNew:60"}
+    System.ArgumentNullException: Value cannot be null. (Parameter 'UserId')
+       at ProtonVPN.Client.Files.UserFileReaderWriter.GetFullFilePath(UserFileReaderWriterParameters parameters)
+       at ProtonVPN.Client.Files.UserFileReaderWriter.ReadOrNew[T](UserFileReaderWriterParameters parameters)
+2025-11-28T05:10:14.296Z | INFO  | APP | Read 0 user settings from file. | {"Caller":"UserSettingsFileReaderWriter.Read:57"}
+2025-11-28T05:10:14.320Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/location": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:10:14.367Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/feature/v2/frontend": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:10:14.368Z | INFO  | SETTINGS:CHANGED | Setting 'DeviceLocation' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:10:14.393Z | INFO  | SETTINGS:CHANGED | Setting 'FeatureFlags' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:10:14.394Z | INFO  | APP | Reprocessing servers. | {"Caller":"ServersCache.Receive:493"}
+2025-11-28T05:10:14.581Z | INFO  | SETTINGS:CHANGED | Setting 'WireGuardConnectionTimeout' changed from 'null' to '"00:00:05"'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:10:14.584Z | INFO  | APP | The old settings file doesn't exist () | {"Caller":"GlobalSettingsMigrator.Migrate:72"}
+2025-11-28T05:10:14.585Z | INFO  | APP | Handle main window start condtions - HasAuthenticatedSessionData: False, IsAutoLaunchEnabled: True, IsAutoLaunchModeOpenOnDesktop: False | {"Caller":"Bootstrapper.HandleMainWindow:246"}
+2025-11-28T05:10:14.586Z | INFO  | APP | Activating MainWindow. | {"Caller":"WindowActivatorBase.Activate:99"}
+2025-11-28T05:10:14.715Z | INFO  | OS | Starting the Windows service 'ProtonVPN Service'. | {"Caller":"Service.Start:99"}
+2025-11-28T05:10:16.948Z | INFO  | PROCESS.COMM | Listener starting (StartPortForwardingStateListenerAsync) | {"Caller":"ClientControllerListener.KeepAliveAsync:75"}
+2025-11-28T05:10:16.948Z | INFO  | PROCESS.COMM | Listener starting (StartConnectionDetailsListenerAsync) | {"Caller":"ClientControllerListener.KeepAliveAsync:75"}
+2025-11-28T05:10:16.948Z | INFO  | PROCESS.COMM | Listener starting (StartUpdateStateListenerAsync) | {"Caller":"ClientControllerListener.KeepAliveAsync:75"}
+2025-11-28T05:10:16.948Z | INFO  | PROCESS.COMM | Listener starting (StartNetShieldStatisticListenerAsync) | {"Caller":"ClientControllerListener.KeepAliveAsync:75"}
+2025-11-28T05:10:16.948Z | INFO  | PROCESS.COMM | Listener starting (StartVpnStateListenerAsync) | {"Caller":"ClientControllerListener.KeepAliveAsync:75"}
+2025-11-28T05:10:16.950Z | INFO  | USER | Requesting unauth session to initiate login process. | {"Caller":"UnauthSessionManager.CreateIfDoesNotExistAsync:55"}
+2025-11-28T05:10:16.951Z | INFO  | API:REQUEST | POST "https://185.159.159.148/auth/v4/sessions" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:10:17.025Z | INFO  | APP | Window 'MainWindow' is opened. | {"Caller":"WindowActivatorBase.OnWindowOpened:213"}
+2025-11-28T05:10:17.028Z | INFO  | APP | Window 'MainWindow' is focused. | {"Caller":"WindowActivatorBase.OnWindowFocused:220"}
+2025-11-28T05:10:17.083Z | INFO  | DNS | No fresh IP addresses for host 'time.windows.com' were found in the cache. Triggering a refresh. | {"Caller":"ARecordDnsManagerBase.ResolveOrGetFromCacheAsync:93"}
+2025-11-28T05:10:17.083Z | INFO  | DNS | Attempting a UDP DNS request for host 'time.windows.com'. | {"Caller":"DnsManager.ResolveDnsAsync:66"}
+2025-11-28T05:10:17.084Z | INFO  | DNS:RESOLVE | Attempting to resolve host 'time.windows.com'. | {"Caller":"DnsResolverBase.ResolveAsync:64"}
+2025-11-28T05:10:17.084Z | INFO  | DNS:NAME_SERVER | Getting name servers from available network interfaces. | {"Caller":"NameServersLoader.Get:45"}
+2025-11-28T05:10:17.096Z | INFO  | DNS:NAME_SERVER | Found 1 name servers. | {"Caller":"NameServersLoader.Get:61"}
+2025-11-28T05:10:17.096Z | INFO  | DNS:RESOLVE | Attempting to resolve host 'time.windows.com' through '108.61.10.10:53'. | {"Caller":"DnsOverUdpResolver.TryResolveAsync:84"}
+2025-11-28T05:10:17.101Z | INFO  | APP | Reading unauthenticated statistical events file. | {"Caller":"StatisticalEventsFileReaderWriter.ReadUnauthenticatedEvents:78"}
+2025-11-28T05:10:17.101Z | INFO  | APP | Read 0 unauthenticated statistical events from file. | {"Caller":"StatisticalEventsFileReaderWriter.ReadUnauthenticatedEvents:80"}
+2025-11-28T05:10:17.104Z | INFO  | PROCESS.COMM | Received update state change with status Checking. | {"Caller":"ClientControllerListener.StartUpdateStateListenerAsync:142"}
+2025-11-28T05:10:17.123Z | INFO  | APP | Starting VPN state refresh timer with initial trigger '00:00:10' | {"Caller":"VpnStatePollingObserver.SetAndRestartTimer:109"}
+2025-11-28T05:10:17.125Z | INFO  | CONN.CONNECT:TRIGGER | [CONNECTION_PROCESS] Status updated to Disconnected. | {"Caller":"ConnectionManager.SetConnectionStatus:349"}
+2025-11-28T05:10:17.126Z | INFO  | CONN.CONNECT:TRIGGER | [CONNECTION_PROCESS] Status updated to Disconnected. | {"Caller":"ConnectionManager.SetConnectionStatus:349"}
+2025-11-28T05:10:17.127Z | INFO  | CONN.CONNECT:TRIGGER | [CONNECTION_PROCESS] Status updated to Disconnected. | {"Caller":"ConnectionManager.SetConnectionStatus:349"}
+2025-11-28T05:10:17.127Z | INFO  | CONN.CONNECT:TRIGGER | [CONNECTION_PROCESS] Status updated to Disconnected. | {"Caller":"ConnectionManager.SetConnectionStatus:349"}
+2025-11-28T05:10:17.162Z | INFO  | DNS:RESPONSE | The endpoint '108.61.10.10:53' responded successfully to the DNS query of host 'time.windows.com'. | {"Caller":"DnsOverUdpResolver.ResolveAsync:122"}
+2025-11-28T05:10:17.163Z | INFO  | DNS:RESPONSE | 1 records were received for host 'time.windows.com' with DNS over UDP endpoint '108.61.10.10:53'. TTL is 284 seconds. | {"Caller":"DnsOverUdpResolver.ResolveAsync:129"}
+2025-11-28T05:10:17.163Z | INFO  | DNS:RESPONSE | Created DNS response entity for host 'time.windows.com' with 1 IP addresses and an expiration date in UTC of 28/11/2025 05:15:01 a. m. based on a TTL of 00:04:44. | {"Caller":"DnsResolverBase.CreateDnsResponseWithIpAddresses:182"}
+2025-11-28T05:10:17.163Z | INFO  | DNS:RESPONSE | Successfully resolved host 'time.windows.com'. | {"Caller":"DnsResolverBase.LogResult:81"}
+2025-11-28T05:10:17.163Z | INFO  | DNS | The UDP DNS request was successful for host 'time.windows.com'. Saving to cache. | {"Caller":"DnsManager.ResolveDnsAsync:71"}
+2025-11-28T05:10:17.164Z | INFO  | SETTINGS:CHANGED | Setting 'DnsCache' changed from '32987Z","ExpirationDateTimeUtc":"2025-11-28T05:19:53.6832987Z"}}' to '32987Z","ExpirationDateTimeUtc":"2025-11-28T05:19:53.6832987Z"}}'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:10:17.296Z | INFO  | API:RESPONSE | POST "https://185.159.159.148/auth/v4/sessions": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:10:17.315Z | INFO  | SETTINGS:CHANGED | Setting 'UnauthUniqueSessionId' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:10:17.316Z | INFO  | SETTINGS:CHANGED | Setting 'UnauthAccessToken' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:10:17.317Z | INFO  | SETTINGS:CHANGED | Setting 'UnauthRefreshToken' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:10:17.437Z | INFO  | APP | Window 'MainWindow' is unfocused. | {"Caller":"WindowActivatorBase.OnWindowUnfocused:225"}
+2025-11-28T05:10:17.714Z | INFO  | PROCESS.COMM | Received update state change with status Checking. | {"Caller":"ClientControllerListener.StartUpdateStateListenerAsync:142"}
+2025-11-28T05:10:18.586Z | INFO  | PROCESS.COMM | Received update state change with status None. | {"Caller":"ClientControllerListener.StartUpdateStateListenerAsync:142"}
+2025-11-28T05:10:25.125Z | INFO  | SETTINGS | Retrieving current device location | {"Caller":"DeviceLocationObserver.OnTriggerAsync:121"}
+2025-11-28T05:10:25.128Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/location" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:10:25.316Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/location": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:11:37.736Z | INFO  | APP | Window 'MainWindow' is focused. | {"Caller":"WindowActivatorBase.OnWindowFocused:220"}
+2025-11-28T05:11:38.476Z | INFO  | APP | Window 'MainWindow' is unfocused. | {"Caller":"WindowActivatorBase.OnWindowUnfocused:225"}
+2025-11-28T05:11:39.440Z | INFO  | APP | Window 'MainWindow' is focused. | {"Caller":"WindowActivatorBase.OnWindowFocused:220"}
+2025-11-28T05:11:40.671Z | INFO  | APP | Window 'MainWindow' is unfocused. | {"Caller":"WindowActivatorBase.OnWindowUnfocused:225"}
+2025-11-28T05:14:12.025Z | INFO  | APP | Window 'MainWindow' is focused. | {"Caller":"WindowActivatorBase.OnWindowFocused:220"}
+2025-11-28T05:14:14.840Z | INFO  | APP | Window 'MainWindow' is unfocused. | {"Caller":"WindowActivatorBase.OnWindowUnfocused:225"}
+2025-11-28T05:14:17.210Z | INFO  | APP | Window 'MainWindow' is focused. | {"Caller":"WindowActivatorBase.OnWindowFocused:220"}
+2025-11-28T05:14:20.441Z | INFO  | APP | Changing authentication status to 'LoggingIn'. | {"Caller":"UserAuthenticator.SetAuthenticationStatus:531"}
+2025-11-28T05:14:20.448Z | INFO  | API:REQUEST | POST "https://185.159.159.148/auth/info" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:21.462Z | INFO  | API:RESPONSE | POST "https://185.159.159.148/auth/info": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:21.630Z | INFO  | API:REQUEST | POST "https://185.159.159.148/auth" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:22.924Z | INFO  | API:RESPONSE | POST "https://185.159.159.148/auth": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:22.934Z | INFO  | SETTINGS:CHANGED | Setting 'UserId' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:22.935Z | INFO  | SETTINGS:CHANGED | Setting 'AccessToken' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:22.935Z | INFO  | SETTINGS:CHANGED | Setting 'UniqueSessionId' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:22.936Z | INFO  | SETTINGS:CHANGED | Setting 'RefreshToken' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:22.940Z | INFO  | API:REQUEST | GET "https://185.159.159.148/core/v4/users" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:22.943Z | INFO  | APP | Requesting a VPN plan update (Force request: True) (Minimum request date UTC: 28/11/2025 05:19:25 a. m.) | {"Caller":"VpnPlanUpdater.EnqueueRequestAsync:78"}
+2025-11-28T05:14:22.944Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/v2" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:23.451Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/v2": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:23.458Z | INFO  | APP | Reading user settings file. | {"Caller":"UserSettingsFileReaderWriter.Read:52"}
+2025-11-28T05:14:23.459Z | INFO  | APP | Read 0 user settings from file. | {"Caller":"UserSettingsFileReaderWriter.Read:57"}
+2025-11-28T05:14:23.465Z | INFO  | SETTINGS:CHANGED | Setting 'MaxDevicesAllowed' changed from 'null' to '11'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:23.476Z | INFO  | SETTINGS:CHANGED | Setting 'VpnPlan' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:23.478Z | INFO  | APP | Reprocessing current servers and fetching new servers after VPN plan change. | {"Caller":"UserAuthenticator.CompleteLoginAsync:413"}
+2025-11-28T05:14:23.479Z | INFO  | APP | Force server update requested | {"Caller":"ServersUpdater.ForceUpdateAsync:95"}
+2025-11-28T05:14:23.479Z | INFO  | APP | Cache is empty, loading servers from file. | {"Caller":"ServersCache.LoadFromFileIfEmpty:150"}
+2025-11-28T05:14:23.479Z | INFO  | APP | Reading servers file. | {"Caller":"ServersFileReaderWriter.Read:54"}
+2025-11-28T05:14:23.479Z | INFO  | APP | Read 0 servers from file. | {"Caller":"ServersFileReaderWriter.Read:56"}
+2025-11-28T05:14:23.487Z | INFO  | SETTINGS:CHANGED | Setting 'LogicalsLastModifiedDate' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:23.488Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/servers-count" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:23.494Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/logicals?SignServer=Server.EntryIP,Server.Label&SecureCoreFilter=all&WithState=true&WithEntriesForProtocols=WireGuardUDP,WireGuardTCP,WireGuardTLS,OpenVPNUDP,OpenVPNTCP" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:23.542Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/core/v4/users": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:23.548Z | INFO  | SETTINGS:CHANGED | Setting 'Username' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:23.549Z | INFO  | SETTINGS:CHANGED | Setting 'UserDisplayName' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:23.550Z | INFO  | SETTINGS:CHANGED | Setting 'UserCreationDateUtc' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:23.776Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/servers-count": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:23.781Z | INFO  | SETTINGS:CHANGED | Setting 'TotalServerCount' changed from 'null' to '16816'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:23.800Z | INFO  | SETTINGS:CHANGED | Setting 'TotalCountryCount' changed from 'null' to '127'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:25.190Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/logicals?SignServer=Server.EntryIP,Server.Label&SecureCoreFilter=all&WithState=true&WithEntriesForProtocols=WireGuardUDP,WireGuardTCP,WireGuardTLS,OpenVPNUDP,OpenVPNTCP": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:26.695Z | INFO  | SETTINGS:CHANGED | Setting 'LogicalsLastModifiedDate' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:26.695Z | INFO  | API | API: Get servers response was modified since last call, updating cached data. | {"Caller":"ServersCache.UpdateAsync:208"}
+2025-11-28T05:14:26.728Z | INFO  | APP | Writing servers file. | {"Caller":"ServersFileReaderWriter.Save:62"}
+2025-11-28T05:14:26.806Z | INFO  | APP | Writing servers file finished with state 'Success'. | {"Caller":"ServersFileReaderWriter.Save:64"}
+2025-11-28T05:14:26.834Z | INFO  | APP | No user settings to migrate. | {"Caller":"UserSettingsMigrator.Migrate:81"}
+2025-11-28T05:14:26.839Z | INFO  | SETTINGS:CHANGED | Setting 'IsUserSettingsMigrationDone' changed from 'null' to 'true'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:26.842Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/v1/ipv6-fragments" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:27.057Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/v1/ipv6-fragments": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:27.066Z | INFO  | SETTINGS:CHANGED | Setting 'Ipv6Fragments' changed from '[]' to '/29","2a0e:d540::/29","2a0f:7802:e2f0::/48","2a0f:85c1:28::/48"]'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.068Z | INFO  | SETTINGS:CHANGED | Setting 'UnauthUniqueSessionId' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.069Z | INFO  | SETTINGS:CHANGED | Setting 'UnauthAccessToken' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.070Z | INFO  | SETTINGS:CHANGED | Setting 'UnauthRefreshToken' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.071Z | INFO  | APP | Connection key pair deleted. | {"Caller":"ConnectionKeyManager.DeleteKeyPair:59"}
+2025-11-28T05:14:27.073Z | INFO  | USER.CERT:REVOKED | Connection certificate deleted. | {"Caller":"ConnectionCertificateManager.DeleteKeyPairAndCertificate:67"}
+2025-11-28T05:14:27.075Z | INFO  | USER.CERT:REFRESH | Forcing a new connection certificate request. | {"Caller":"ConnectionCertificateManager.LogNewCertificateRequest:149"}
+2025-11-28T05:14:27.095Z | INFO  | SETTINGS:CHANGED | Setting 'ConnectionKeyPair' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.095Z | INFO  | APP | New connection key pair successfully generated and saved. | {"Caller":"ConnectionKeyManager.RegenerateKeyPair:53"}
+2025-11-28T05:14:27.097Z | INFO  | API:REQUEST | POST "https://185.159.159.148/vpn/v1/certificate" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:27.101Z | INFO  | SETTINGS | Retrieving Client Config | {"Caller":"ClientConfigObserver.MakeClientConfigRequestAsync:96"}
+2025-11-28T05:14:27.102Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/v2/clientconfig" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:27.104Z | INFO  | SETTINGS | Fetching feature flags | {"Caller":"FeatureFlagsObserver.UpdateFeatureFlagsAsync:107"}
+2025-11-28T05:14:27.104Z | INFO  | API:REQUEST | GET "https://185.159.159.148/feature/v2/frontend" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:27.104Z | INFO  | APP | Changing authentication status to 'LoggedIn'. | {"Caller":"UserAuthenticator.SetAuthenticationStatus:531"}
+2025-11-28T05:14:27.105Z | INFO  | APP | Reading authenticated statistical events file. | {"Caller":"StatisticalEventsFileReaderWriter.ReadAuthenticatedEvents:63"}
+2025-11-28T05:14:27.106Z | INFO  | APP | Read 0 authenticated statistical events from file. | {"Caller":"StatisticalEventsFileReaderWriter.ReadAuthenticatedEvents:65"}
+2025-11-28T05:14:27.106Z | INFO  | APP | Reading profiles file. | {"Caller":"ProfilesFileReaderWriter.Read:63"}
+2025-11-28T05:14:27.107Z | INFO  | APP | Profiles file not found for the current user. | {"Caller":"ProfilesFileReaderWriter.Read:68"}
+2025-11-28T05:14:27.107Z | INFO  | APP | Loaded 0 connection profiles from file | {"Caller":"ProfilesManager.LoadProfiles:144"}
+2025-11-28T05:14:27.107Z | INFO  | APP | No connection profiles found, creating default profiles | {"Caller":"ProfilesManager.LoadProfiles:149"}
+2025-11-28T05:14:27.112Z | INFO  | APP | Saving 6 connection profiles | {"Caller":"ProfilesManager.SaveProfiles:159 < ProfilesManager.LoadProfiles < ProfilesManager.Receive"}
+2025-11-28T05:14:27.113Z | INFO  | APP | Writing 6 profiles to file. | {"Caller":"ProfilesFileReaderWriter.Save:93"}
+2025-11-28T05:14:27.143Z | INFO  | APP | Writing profiles file finished with state 'Success'. | {"Caller":"ProfilesFileReaderWriter.Save:100"}
+2025-11-28T05:14:27.144Z | INFO  | APP | Reading recent connections file. | {"Caller":"RecentsFileReaderWriter.Read:62"}
+2025-11-28T05:14:27.144Z | INFO  | APP | Read 0 recent connections from file. | {"Caller":"RecentsFileReaderWriter.Read:71"}
+2025-11-28T05:14:27.150Z | INFO  | SETTINGS:CHANGED | Setting 'LastSettingsHeartbeatTimeUtc' changed from 'null' to '"2025-11-28T05:14:27.1493408+00:00"'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.151Z | INFO  | USER.CERT:SCHEDULE_REFRESH | Connection certificate refresh scheduled for every '00:05:29.6883138'. | {"Caller":"ConnectionCertificateUpdater.Receive:62"}
+2025-11-28T05:14:27.153Z | INFO  | APP | Loading announcements from file as the user has none. | {"Caller":"AnnouncementsProvider.LoadFromFileIfEmpty:109"}
+2025-11-28T05:14:27.153Z | INFO  | APP | Reading announcements file. | {"Caller":"AnnouncementsFileReaderWriter.Read:54"}
+2025-11-28T05:14:27.153Z | INFO  | APP | Read 0 announcements from file. | {"Caller":"AnnouncementsFileReaderWriter.Read:56"}
+2025-11-28T05:14:27.157Z | INFO  | API:REQUEST | GET "https://185.159.159.148/core/v4/notifications?FullScreenImageSupport=png&FullScreenImageWidth=1024&FullScreenImageHeight=768" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:27.675Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/core/v4/notifications?FullScreenImageSupport=png&FullScreenImageWidth=1024&FullScreenImageHeight=768": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:27.693Z | INFO  | DNS | No fresh IP addresses for host 'protonvpn.com' were found in the cache. Triggering a refresh. | {"Caller":"ARecordDnsManagerBase.ResolveOrGetFromCacheAsync:93"}
+2025-11-28T05:14:27.693Z | INFO  | DNS | Attempting a UDP DNS request for host 'protonvpn.com'. | {"Caller":"DnsManager.ResolveDnsAsync:66"}
+2025-11-28T05:14:27.693Z | INFO  | DNS:RESOLVE | Attempting to resolve host 'protonvpn.com'. | {"Caller":"DnsResolverBase.ResolveAsync:64"}
+2025-11-28T05:14:27.693Z | INFO  | DNS:NAME_SERVER | Getting name servers from available network interfaces. | {"Caller":"NameServersLoader.Get:45"}
+2025-11-28T05:14:27.701Z | INFO  | DNS:NAME_SERVER | Found 1 name servers. | {"Caller":"NameServersLoader.Get:61"}
+2025-11-28T05:14:27.701Z | INFO  | DNS:RESOLVE | Attempting to resolve host 'protonvpn.com' through '108.61.10.10:53'. | {"Caller":"DnsOverUdpResolver.TryResolveAsync:84"}
+2025-11-28T05:14:27.714Z | INFO  | DNS:RESPONSE | The endpoint '108.61.10.10:53' responded successfully to the DNS query of host 'protonvpn.com'. | {"Caller":"DnsOverUdpResolver.ResolveAsync:122"}
+2025-11-28T05:14:27.714Z | INFO  | DNS:RESPONSE | 1 records were received for host 'protonvpn.com' with DNS over UDP endpoint '108.61.10.10:53'. TTL is 300 seconds. | {"Caller":"DnsOverUdpResolver.ResolveAsync:129"}
+2025-11-28T05:14:27.714Z | INFO  | DNS:RESPONSE | Created DNS response entity for host 'protonvpn.com' with 1 IP addresses and an expiration date in UTC of 28/11/2025 05:19:27 a. m. based on a TTL of 00:05:00. | {"Caller":"DnsResolverBase.CreateDnsResponseWithIpAddresses:182"}
+2025-11-28T05:14:27.715Z | INFO  | DNS:RESPONSE | Successfully resolved host 'protonvpn.com'. | {"Caller":"DnsResolverBase.LogResult:81"}
+2025-11-28T05:14:27.715Z | INFO  | DNS | The UDP DNS request was successful for host 'protonvpn.com'. Saving to cache. | {"Caller":"DnsManager.ResolveDnsAsync:71"}
+2025-11-28T05:14:27.715Z | INFO  | SETTINGS:CHANGED | Setting 'DnsCache' changed from '32987Z","ExpirationDateTimeUtc":"2025-11-28T05:19:53.6832987Z"}}' to '32987Z","ExpirationDateTimeUtc":"2025-11-28T05:19:53.6832987Z"}}'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.716Z | INFO  | API:REQUEST | GET "https://185.159.159.140/download/resources/promo/ic-bag-percent@3x.png" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:27.952Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/feature/v2/frontend": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:27.952Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/v2/clientconfig": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:27.952Z | INFO  | API:RESPONSE | POST "https://185.159.159.148/vpn/v1/certificate": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:27.967Z | INFO  | SETTINGS:CHANGED | Setting 'ConnectionCertificate' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.967Z | INFO  | USER.CERT:NEW | New connection certificate successfully saved. Expires at 29/11/2025 05:14:27 a. m. +00:00. | {"Caller":"ConnectionCertificateManager.RequestConnectionCertificateAsync:209"}
+2025-11-28T05:14:27.976Z | INFO  | SETTINGS:CHANGED | Setting 'OpenVpnTcpPorts' changed from 'null' to '[443,7770,8443]'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.977Z | INFO  | SETTINGS:CHANGED | Setting 'OpenVpnUdpPorts' changed from 'null' to '[80,51820,4569,1194,5060]'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.978Z | INFO  | SETTINGS:CHANGED | Setting 'WireGuardUdpPorts' changed from 'null' to '[443,88,1224,51820,500,4500]'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.979Z | INFO  | SETTINGS:CHANGED | Setting 'WireGuardTcpPorts' changed from 'null' to '[443]'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.979Z | INFO  | SETTINGS:CHANGED | Setting 'WireGuardTlsPorts' changed from 'null' to '[443]'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:27.980Z | INFO  | SETTINGS:CHANGED | Setting 'IsFeatureConnectedServerCheckEnabled' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.981Z | INFO  | SETTINGS:CHANGED | Setting 'ConnectedServerCheckInterval' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.988Z | INFO  | SETTINGS:CHANGED | Setting 'ChangeServerSettings' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:27.993Z | INFO  | SETTINGS:CHANGED | Setting 'DisabledSmartProtocols' changed (encrypted). | {"Caller":"SettingsCacheBase.LogChange:321"}
+2025-11-28T05:14:28.249Z | INFO  | API:RESPONSE | GET "https://185.159.159.140/download/resources/promo/ic-bag-percent@3x.png": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:28.258Z | INFO  | API:REQUEST | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-modal-dark@2x.png" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:28.482Z | INFO  | API:RESPONSE | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-modal-dark@2x.png": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:28.492Z | INFO  | API:REQUEST | GET "https://185.159.159.148/vpn/v1/featureconfig/dynamic-bug-reports" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:28.599Z | INFO  | SETTINGS:CHANGED | Setting 'LastSeenWhatsNewOverlayVersion' changed from 'null' to '2'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:28.600Z | INFO  | SETTINGS:CHANGED | Setting 'WasWelcomeOverlayDisplayed' changed from 'null' to 'true'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:14:28.707Z | INFO  | API:RESPONSE | GET "https://185.159.159.148/vpn/v1/featureconfig/dynamic-bug-reports": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:29.666Z | INFO  | API:REQUEST | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-modal-light@2x.png" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:29.953Z | INFO  | API:RESPONSE | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-modal-light@2x.png": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:30.241Z | INFO  | API:REQUEST | GET "https://185.159.159.140/download/resources/promo/notification-icon@3x.png" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:30.410Z | INFO  | API:RESPONSE | GET "https://185.159.159.140/download/resources/promo/notification-icon@3x.png": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:30.412Z | INFO  | API:REQUEST | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-banner-dark@2x.png" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:30.590Z | INFO  | API:RESPONSE | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-banner-dark@2x.png": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:30.591Z | INFO  | API:REQUEST | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-banner-light@2x.png" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:30.761Z | INFO  | API:RESPONSE | GET "https://185.159.159.140/download/resources/promo/bf2025-unlimited12/usd/en-desktop-banner-light@2x.png": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:30.765Z | INFO  | APP | Writing announcements file. | {"Caller":"AnnouncementsFileReaderWriter.Save:70"}
+2025-11-28T05:14:30.770Z | INFO  | APP | 1 statistical events are now queued. | {"Caller":"StatisticEventSenderBase.EnqueueAsync:109"}
+2025-11-28T05:14:30.770Z | INFO  | APP | Writing authenticated statistical events file. | {"Caller":"StatisticalEventsFileReaderWriter.SaveAuthenticatedEvents:71"}
+2025-11-28T05:14:30.782Z | INFO  | APP | Writing authenticated statistical events file finished with state 'Success'. | {"Caller":"StatisticalEventsFileReaderWriter.SaveAuthenticatedEvents:73"}
+2025-11-28T05:14:30.782Z | INFO  | APP | Sending 1 statistical events. | {"Caller":"StatisticEventSenderBase.SendAsync:161"}
+2025-11-28T05:14:30.784Z | INFO  | API:REQUEST | POST "https://185.159.159.148/data/v1/stats/multiple" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:14:30.794Z | INFO  | APP | Writing announcements file finished with state 'Success'. | {"Caller":"AnnouncementsFileReaderWriter.Save:72"}
+2025-11-28T05:14:30.795Z | INFO  | APP | Reading all announcement files. | {"Caller":"AnnouncementsFileReaderWriter.ReadAllUsers:62"}
+2025-11-28T05:14:30.816Z | INFO  | APP | Read 1 announcement files. | {"Caller":"AnnouncementsFileReaderWriter.ReadAllUsers:64"}
+2025-11-28T05:14:30.988Z | INFO  | API:RESPONSE | POST "https://185.159.159.148/data/v1/stats/multiple": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:30.989Z | INFO  | APP | Successfully sent 1 statistical events. Removing them from the queue. | {"Caller":"StatisticEventSenderBase.SendAsync:165"}
+2025-11-28T05:14:30.990Z | INFO  | APP | Removed successfully sent statistical events. 0 events are now queued. | {"Caller":"StatisticEventSenderBase.RemoveSuccessfullySentEventsAsync:202"}
+2025-11-28T05:14:30.990Z | INFO  | APP | Writing authenticated statistical events file. | {"Caller":"StatisticalEventsFileReaderWriter.SaveAuthenticatedEvents:71"}
+2025-11-28T05:14:30.991Z | INFO  | APP | Writing authenticated statistical events file finished with state 'Success'. | {"Caller":"StatisticalEventsFileReaderWriter.SaveAuthenticatedEvents:73"}
+2025-11-28T05:14:39.031Z | INFO  | APP | Window 'MainWindow' is unfocused. | {"Caller":"WindowActivatorBase.OnWindowUnfocused:225"}
+2025-11-28T05:15:35.797Z | INFO  | APP | Window 'MainWindow' is focused. | {"Caller":"WindowActivatorBase.OnWindowFocused:220"}
+2025-11-28T05:15:37.852Z | INFO  | APP | Closing window 'MainWindow' requested. | {"Caller":"WindowActivatorBase.OnWindowClosing:235"}
+2025-11-28T05:15:37.852Z | INFO  | APP | Closing window 'MainWindow' aborted. | {"Caller":"WindowActivatorBase.OnWindowCloseAborted:240"}
+2025-11-28T05:15:37.852Z | INFO  | APP | Hiding MainWindow. | {"Caller":"WindowActivatorBase.Hide:112"}
+2025-11-28T05:15:37.882Z | INFO  | APP | Window 'MainWindow' is unfocused. | {"Caller":"WindowActivatorBase.OnWindowUnfocused:225"}
+2025-11-28T05:15:37.882Z | INFO  | APP | Window 'MainWindow' is hidden. | {"Caller":"WindowActivatorBase.OnWindowHidden:230"}
+2025-11-28T05:15:42.464Z | INFO  | APP:STOP | Exiting application requested (Ask for exit confirmation: True) | {"Caller":"AppExitInvoker.InternalExitAsync:109"}
+2025-11-28T05:15:42.465Z | INFO  | APP | Exiting MainWindow. | {"Caller":"WindowActivatorBase.Exit:124"}
+2025-11-28T05:15:42.465Z | INFO  | APP | Window 'MainWindow' is closed. | {"Caller":"WindowActivatorBase.OnWindowClosed:245"}
+2025-11-28T05:15:42.466Z | INFO  | PROCESS.COMM | The VpnServiceCaller has been stopped. | {"Caller":"ServiceCallerBase.Stop:104"}
+2025-11-28T05:15:42.466Z | INFO  | PROCESS.COMM | The UpdateServiceCaller has been stopped. | {"Caller":"ServiceCallerBase.Stop:104"}
+2025-11-28T05:15:42.475Z | INFO  | OS | Stopping the Windows service 'ProtonVPN Service'. | {"Caller":"Service.Stop:144"}
+2025-11-28T05:15:42.547Z | INFO  | SETTINGS:CHANGED | Setting 'SidebarWidth' changed from 'null' to '280'. | {"Caller":"SettingsCacheBase.LogChangeUnencrypted:334"}
+2025-11-28T05:15:42.636Z | INFO  | APP | Exiting TrayAppWindow. | {"Caller":"WindowActivatorBase.Exit:124"}
+2025-11-28T05:15:42.637Z | INFO  | APP | Window 'TrayAppWindow' is closed. | {"Caller":"WindowActivatorBase.OnWindowClosed:245"}

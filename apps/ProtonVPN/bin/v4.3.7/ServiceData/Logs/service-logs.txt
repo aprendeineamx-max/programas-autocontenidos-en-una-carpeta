@@ -1,0 +1,45 @@
+﻿2025-11-28T05:10:15.211Z | INFO  | APP:START | === Booting Proton VPN 4.3.7 [Microsoft Windows NT 10.0.26100.0] X64 === | {"Caller":"Log4NetLogger..ctor:40"}
+2025-11-28T05:10:15.548Z | INFO  | APP | Checking for files to be deleted in log folder 'C:\Users\Administrator\Desktop\Cambiar ubicacion de donde se guardan los datos de los programas\apps\ProtonVPN\bin\v4.3.7\ServiceData\Logs'. The maximum number of files allowed is 10. | {"Caller":"LogCleaner.Clean:39"}
+2025-11-28T05:10:15.549Z | INFO  | APP | The folder 'C:\Users\Administrator\Desktop\Cambiar ubicacion de donde se guardan los datos de los programas\apps\ProtonVPN\bin\v4.3.7\ServiceData\Logs' has 1 files. | {"Caller":"LogCleaner.Clean:42"}
+2025-11-28T05:10:15.551Z | INFO  | APP | The log folder has 0 files exceeding the limit of 10 files. | {"Caller":"LogCleaner.GetFilesExceedingLimit:81"}
+2025-11-28T05:10:15.552Z | INFO  | APP | The log folder has 0 old files with a last write date before 2025-10-31T05:10:15.5516918Z. | {"Caller":"LogCleaner.GetOldFiles:113"}
+2025-11-28T05:10:15.552Z | INFO  | APP | The log folder has 0 files to delete. | {"Caller":"LogCleaner.GetFilesToDelete:69"}
+2025-11-28T05:10:15.808Z | INFO  | APP.SERVICE:START | ´BFE Service - Start type: Automatic, Status: Running | {"Caller":"VpnService.IsBfeServiceRunningAndEnabled:221"}
+2025-11-28T05:10:15.809Z | INFO  | CONN.DISCONNECT | A disconnect was requested with error 'None'. | {"Caller":"ReconnectingWrapper.CancelTokenAndDisconnect:135"}
+2025-11-28T05:10:15.809Z | INFO  | CONN.DISCONNECT | HandlingRequestsWrapper: Disconnect requested, queuing Disconnect | {"Caller":"HandlingRequestsWrapper.Disconnect:97"}
+2025-11-28T05:10:15.812Z | INFO  | CONN:STATE_CHANGED | VPN state changed: Disconnecting, Error: None, LocalIP: , RemoteIP: , Label:  | {"Caller":"LoggingWrapper.Origin_StateChanged:93"}
+2025-11-28T05:10:15.817Z | INFO  | FIREWALL | Restoring internet | {"Caller":"Firewall.DisableLeakProtection:116"}
+2025-11-28T05:10:16.027Z | INFO  | FIREWALL | Internet restored | {"Caller":"Firewall.DisableLeakProtection:129"}
+2025-11-28T05:10:16.029Z | INFO  | APP.SERVICE | VPN state changed - Status 'Disconnecting', Error: 'None', LocalIp: '', RemoteIp: '', Port: 0, Label: '', VpnProtocol: 'Smart', OpenVpnAdapter: '' | {"Caller":"ClientControllerSender.OnVpnStateChanged:168"}
+2025-11-28T05:10:16.034Z | INFO  | CONN.DISCONNECT | HandlingRequestsWrapper: Disconnecting | {"Caller":"HandlingRequestsWrapper.Disconnect:216"}
+2025-11-28T05:10:16.036Z | INFO  | LOCAL_AGENT | Disconnect action started | {"Caller":"LocalAgentWrapper.Disconnect:145"}
+2025-11-28T05:10:16.037Z | INFO  | LOCAL_AGENT | Disconnect action started | {"Caller":"LocalAgentWrapper.Disconnect:145"}
+2025-11-28T05:10:16.040Z | INFO  | CONN:STATE_CHANGED | VPN state changed: Disconnected, Error: None, LocalIP: , RemoteIP: , Label:  | {"Caller":"LoggingWrapper.Origin_StateChanged:93"}
+2025-11-28T05:10:16.040Z | INFO  | CONN.DISCONNECT | Disconnect action started | {"Caller":"OpenVpnConnection.DisconnectAction:195"}
+2025-11-28T05:10:16.040Z | INFO  | FIREWALL | Restoring internet | {"Caller":"Firewall.DisableLeakProtection:116"}
+2025-11-28T05:10:16.040Z | INFO  | CONN.DISCONNECT | Disconnect action started. | {"Caller":"WireGuardConnection.DisconnectActionAsync:170"}
+2025-11-28T05:10:16.040Z | INFO  | CONN:STATE_CHANGED | State changed to Disconnecting, Error: None | {"Caller":"OpenVpnConnection.OnStateChanged:353"}
+2025-11-28T05:10:16.042Z | INFO  | CONN | OpenVPN <- Signaling ProtonVPN-Exit-Event | {"Caller":"OpenVpnExitEvent.Signal:44"}
+2025-11-28T05:10:16.045Z | INFO  | CONN.DISCONNECT | Disconnect action completed. | {"Caller":"WireGuardConnection.OnDisconnectActionCompleted:196"}
+2025-11-28T05:10:16.048Z | INFO  | CONN.DISCONNECT | Disconnect action completed | {"Caller":"OpenVpnConnection.DisconnectAction_Completed:217"}
+2025-11-28T05:10:16.049Z | INFO  | CONN:STATE_CHANGED | State changed to Disconnected, Error: None | {"Caller":"OpenVpnConnection.OnStateChanged:353"}
+2025-11-28T05:10:16.242Z | INFO  | FIREWALL | Internet restored | {"Caller":"Firewall.DisableLeakProtection:129"}
+2025-11-28T05:10:16.243Z | INFO  | APP.SERVICE | VPN state changed - Status 'Disconnected', Error: 'None', LocalIp: '', RemoteIp: '', Port: 0, Label: '', VpnProtocol: 'Smart', OpenVpnAdapter: '' | {"Caller":"ClientControllerSender.OnVpnStateChanged:168"}
+2025-11-28T05:10:16.244Z | INFO  | CONN:STATE_CHANGED | VPN state changed: Disconnecting, Error: None, LocalIP: , RemoteIP: , Label:  | {"Caller":"LoggingWrapper.Origin_StateChanged:93"}
+2025-11-28T05:10:16.245Z | INFO  | FIREWALL | Restoring internet | {"Caller":"Firewall.DisableLeakProtection:116"}
+2025-11-28T05:10:16.444Z | INFO  | FIREWALL | Internet restored | {"Caller":"Firewall.DisableLeakProtection:129"}
+2025-11-28T05:10:16.445Z | INFO  | APP.SERVICE | VPN state changed - Status 'Disconnecting', Error: 'None', LocalIp: '', RemoteIp: '', Port: 0, Label: '', VpnProtocol: 'Smart', OpenVpnAdapter: '' | {"Caller":"ClientControllerSender.OnVpnStateChanged:168"}
+2025-11-28T05:10:16.445Z | INFO  | CONN:STATE_CHANGED | VPN state changed: Disconnected, Error: None, LocalIP: 10.2.0.2, RemoteIP: , Label:  | {"Caller":"LoggingWrapper.Origin_StateChanged:93"}
+2025-11-28T05:10:16.445Z | INFO  | FIREWALL | Restoring internet | {"Caller":"Firewall.DisableLeakProtection:116"}
+2025-11-28T05:10:16.647Z | INFO  | FIREWALL | Internet restored | {"Caller":"Firewall.DisableLeakProtection:129"}
+2025-11-28T05:10:16.647Z | INFO  | APP.SERVICE | VPN state changed - Status 'Disconnected', Error: 'None', LocalIp: '10.2.0.2', RemoteIp: '', Port: 0, Label: '', VpnProtocol: 'WireGuardUdp', OpenVpnAdapter: '' | {"Caller":"ClientControllerSender.OnVpnStateChanged:168"}
+2025-11-28T05:10:16.647Z | INFO  | CONN:STATE_CHANGED | VPN state changed: Disconnected, Error: None, LocalIP: , RemoteIP: , Label:  | {"Caller":"LoggingWrapper.Origin_StateChanged:93"}
+2025-11-28T05:10:17.080Z | INFO  | APP.UPDATE:CHECK | Checking for updates. | {"Caller":"NotifyingAppUpdate.UnsafeCheckForUpdate:104"}
+2025-11-28T05:10:17.107Z | INFO  | API:REQUEST | GET "https://protonvpn.com/download/windows/x64/v1/version.json" | {"Caller":"LoggingHandler.LogHttpRequest:88"}
+2025-11-28T05:10:17.623Z | INFO  | API:RESPONSE | GET "https://protonvpn.com/download/windows/x64/v1/version.json": 200 OK" | {"Caller":"LoggingHandler.LogHttpResponse:96"}
+2025-11-28T05:14:27.991Z | INFO  | USER.CERT | Certificate set. The certificate expires in '11/29/2025 5:14:27 AM'. | {"Caller":"ConnectionCertificateCache.SetCertificate:91"}
+2025-11-28T05:15:42.546Z | INFO  | APP.SERVICE:STOP | Service is stopping | {"Caller":"VpnService.OnStop:137"}
+2025-11-28T05:15:42.546Z | INFO  | CONN.DISCONNECT | A disconnect was requested with error 'None'. | {"Caller":"ReconnectingWrapper.CancelTokenAndDisconnect:135"}
+2025-11-28T05:15:42.546Z | INFO  | CONN.DISCONNECT | HandlingRequestsWrapper: Disconnect requested, queuing Disconnect | {"Caller":"HandlingRequestsWrapper.Disconnect:97"}
+2025-11-28T05:15:42.547Z | INFO  | CONN:STATE_CHANGED | VPN state changed: Disconnected, Error: None, LocalIP: , RemoteIP: , Label:  | {"Caller":"LoggingWrapper.Origin_StateChanged:93"}
+2025-11-28T05:15:42.549Z | INFO  | APP.SERVICE:STOP | === Proton VPN Service has exited === | {"Caller":"Bootstrapper.Start:102"}
