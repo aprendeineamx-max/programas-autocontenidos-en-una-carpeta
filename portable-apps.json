@@ -1,0 +1,44 @@
+[
+  {
+    "name": "ProtonVPN",
+    "installer": "installers/ProtonVPN_v4.3.7_x64.exe",
+    "installerArgs": "/DIR=\"{BIN}\" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART",
+    "executable": "apps/ProtonVPN/bin/ProtonVPN.Launcher.exe",
+    "launchArgs": "",
+    "workingDir": "apps/ProtonVPN/bin",
+    "dataPaths": [
+      "data/ProtonVPN/AppData/Local",
+      "data/ProtonVPN/AppData/Roaming",
+      "data/ProtonVPN/ProgramData",
+      "data/ProtonVPN/UserProfile",
+      "data/ProtonVPN/Temp"
+    ],
+    "knownExternalPaths": [
+      "%APPDATA%/Proton*",
+      "%LOCALAPPDATA%/Proton*",
+      "%PROGRAMDATA%/Proton*"
+    ],
+    "notes": "Requiere drivers/servicio; usa instalador con /DIR={BIN}. Sesión probablemente pedirá login en cada PC."
+  },
+  {
+    "name": "TemplateApp",
+    "installer": "installers/YourInstaller.exe",
+    "installerArgs": "/DIR=\"{BIN}\" /S",
+    "executable": "apps/TemplateApp/bin/yourapp.exe",
+    "launchArgs": "",
+    "workingDir": "apps/TemplateApp/bin",
+    "dataPaths": [
+      "data/TemplateApp/AppData/Local",
+      "data/TemplateApp/AppData/Roaming",
+      "data/TemplateApp/ProgramData",
+      "data/TemplateApp/UserProfile",
+      "data/TemplateApp/Temp"
+    ],
+    "knownExternalPaths": [
+      "%APPDATA%/TemplateApp*",
+      "%LOCALAPPDATA%/TemplateApp*",
+      "%PROGRAMDATA%/TemplateApp*"
+    ],
+    "notes": "Copia este bloque y ajústalo para cada app nueva."
+  }
+]
