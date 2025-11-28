@@ -10,12 +10,11 @@ Initialize-PortableRoot | Out-Null
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# Defaults
 $defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
-$form.Size = New-Object System.Drawing.Size(720,420)
+$form.Size = New-Object System.Drawing.Size(760,560)
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = 'FixedDialog'
 $form.MaximizeBox = $false
@@ -23,19 +22,10 @@ $form.MinimizeBox = $false
 
 $title = New-Object System.Windows.Forms.Label
 $title.Text = "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..."
-$title.Location = New-Object System.Drawing.Point(10,10)
+$title.Location = New-Object System.Drawing.Point(12,12)
 $title.AutoSize = $true
-$title.MaximumSize = New-Object System.Drawing.Size(690,0)
+$title.MaximumSize = New-Object System.Drawing.Size(720,0)
 $title.Font = New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Bold)
-
-function New-Separator($y) {
-    $sep = New-Object System.Windows.Forms.Label
-    $sep.BorderStyle = 'Fixed3D'
-    $sep.Width = 670
-    $sep.Height = 2
-    $sep.Location = New-Object System.Drawing.Point(10,$y)
-    return $sep
-}
 
 function New-Label($text, $x, $y) {
     $lbl = New-Object System.Windows.Forms.Label
@@ -51,66 +41,96 @@ function New-Textbox($x,$y,$w) {
     return $tb
 }
 
-$lblName = New-Label "Nombre de la app (ID):" 10 60
-$txtName = New-Textbox 250 57 330
-$lblNameDesc = New-Label "(Se usa como carpeta: apps/<ID> y data/<ID>)" 250 80
-$lblNameDesc.ForeColor = [System.Drawing.Color]::DimGray
-$lblNameDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
+$y = 50
+$x = 12
+$w = 720
 
-$lblInstaller = New-Label "Instalador (.exe) a importar:" 10 110
-$txtInstaller = New-Textbox 250 107 240
-$btnInstaller = New-Object System.Windows.Forms.Button
-$btnInstaller.Text = "Examinar..."
-$btnInstaller.Location = New-Object System.Drawing.Point(500,105)
-$btnInstaller.Width = 80
-$lblInstallerDesc = New-Label "(Se copiará a installers/<ID>.exe)" 250 130
-$lblInstallerDesc.ForeColor = [System.Drawing.Color]::DimGray
-$lblInstallerDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
+function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[switch]$HasButton) {
+    $controls = @()
+    $lbl = New-Label $label $x $($y.Value)
+    $lbl.Font = New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Regular)
+    $controls += $lbl
+    $y.Value += 20
 
-$lblArgs = New-Label "Parámetros del instalador (/DIR={BIN} etc):" 10 160
-$txtArgs = New-Textbox 250 157 330
+    $tbWidth = $w - 40
+    if ($HasButton) { $tbWidth -= 120 }
+    $tb = New-Textbox $x $($y.Value) $tbWidth
+    $controls += $tb
+
+    if ($placeholder) {
+        $tb.ForeColor = [System.Drawing.Color]::DimGray
+        $tb.Text = $placeholder
+        $tb.Add_Enter({
+            if ($tb.ForeColor -eq [System.Drawing.Color]::DimGray) {
+                $tb.Text = ""
+                $tb.ForeColor = [System.Drawing.Color]::Black
+            }
+        })
+        $tb.Add_Leave({
+            if ([string]::IsNullOrWhiteSpace($tb.Text)) {
+                $tb.ForeColor = [System.Drawing.Color]::DimGray
+                $tb.Text = $placeholder
+            }
+        })
+    }
+
+    $btn = $null
+    if ($HasButton) {
+        $btn = New-Object System.Windows.Forms.Button
+        $btn.Text = "Examinar..."
+        $btn.Width = 100
+        $btn.Location = New-Object System.Drawing.Point($tb.Left + $tb.Width + 10, $tb.Top - 1)
+        $controls += $btn
+    }
+
+    $y.Value += 26
+    if ($desc) {
+        $descLbl = New-Label $desc $x $($y.Value)
+        $descLbl.ForeColor = [System.Drawing.Color]::DimGray
+        $descLbl.Font = New-Object System.Drawing.Font('Segoe UI',8)
+        $controls += $descLbl
+        $y.Value += 26
+    } else {
+        $y.Value += 10
+    }
+    return @{ Controls = $controls; TextBox = $tb; Button = $btn }
+}
+
+$nameField = Add-Field -label "Nombre de la app (ID)" -desc "Se usa como carpeta: apps/<ID> y data/<ID>." -placeholder "MiApp" -y ([ref]$y)
+$txtName = $nameField.TextBox
+
+$installerField = Add-Field -label "Instalador (.exe) a importar" -desc "Se copiará a installers/<ID>.exe" -placeholder "Selecciona un .exe" -y ([ref]$y) -HasButton
+$txtInstaller = $installerField.TextBox
+$btnInstaller = $installerField.Button
+
+$argsField = Add-Field -label "Parámetros del instalador (/DIR={BIN} etc)" -desc "Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -placeholder "/DIR=""{BIN}"" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART" -y ([ref]$y)
+$txtArgs = $argsField.TextBox
+$txtArgs.ForeColor = [System.Drawing.Color]::Black
 $txtArgs.Text = $defaultArgs
-$lblArgsDesc = New-Label "(Usa tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE})" 250 180
-$lblArgsDesc.ForeColor = [System.Drawing.Color]::DimGray
-$lblArgsDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
 
-$lblExe = New-Label "Ejecutable relativo tras instalar (apps\\<App>\\bin\\*.exe):" 10 210
-$txtExe = New-Textbox 250 207 330
-$lblExeDesc = New-Label "(Ejemplo: apps\\MiApp\\bin\\MiApp.exe)" 250 228
-$lblExeDesc.ForeColor = [System.Drawing.Color]::DimGray
-$lblExeDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
+$exeField = Add-Field -label "Ejecutable relativo tras instalar" -desc "Ejemplo: apps\\MiApp\\bin\\MiApp.exe" -placeholder "apps\\MiApp\\bin\\MiApp.exe" -y ([ref]$y)
+$txtExe = $exeField.TextBox
 
-$lblWD = New-Label "WorkingDir relativo (opcional):" 10 250
-$txtWD = New-Textbox 250 247 330
-$lblWDDesc = New-Label "(Por defecto, carpeta del ejecutable)" 250 268
-$lblWDDesc.ForeColor = [System.Drawing.Color]::DimGray
-$lblWDDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
+$wdField = Add-Field -label "WorkingDir relativo (opcional)" -desc "Por defecto, la carpeta del ejecutable." -placeholder "apps\\MiApp\\bin" -y ([ref]$y)
+$txtWD = $wdField.TextBox
 
 $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Iniciar instalación portable"
-$btnStart.Location = New-Object System.Drawing.Point(420, 300)
-$btnStart.Width = 210
+$btnStart.Width = 220
+$btnStart.Location = New-Object System.Drawing.Point($form.ClientSize.Width - 240, $form.ClientSize.Height - 60)
 
 $btnCancel = New-Object System.Windows.Forms.Button
 $btnCancel.Text = "Cancelar"
-$btnCancel.Location = New-Object System.Drawing.Point(310,300)
-$btnCancel.Width = 90
+$btnCancel.Width = 100
+$btnCancel.Location = New-Object System.Drawing.Point($form.ClientSize.Width - 350, $form.ClientSize.Height - 60)
 
-$form.Controls.AddRange(@(
-    $title,
-    (New-Separator 40),
-    $lblName,$txtName,$lblNameDesc,
-    (New-Separator 95),
-    $lblInstaller,$txtInstaller,$btnInstaller,$lblInstallerDesc,
-    (New-Separator 145),
-    $lblArgs,$txtArgs,$lblArgsDesc,
-    (New-Separator 195),
-    $lblExe,$txtExe,$lblExeDesc,
-    (New-Separator 235),
-    $lblWD,$txtWD,$lblWDDesc,
-    (New-Separator 285),
-    $btnStart,$btnCancel
-))
+$form.Controls.AddRange(@($title))
+$form.Controls.AddRange($nameField.Controls)
+$form.Controls.AddRange($installerField.Controls)
+$form.Controls.AddRange($argsField.Controls)
+$form.Controls.AddRange($exeField.Controls)
+$form.Controls.AddRange($wdField.Controls)
+$form.Controls.AddRange(@($btnStart,$btnCancel))
 
 $ofd = New-Object System.Windows.Forms.OpenFileDialog
 $ofd.Filter = "Executables (*.exe)|*.exe|All files (*.*)|*.*"
@@ -119,6 +139,7 @@ $ofd.Title = "Selecciona el instalador"
 $btnInstaller.Add_Click({
     if ($ofd.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         $txtInstaller.Text = $ofd.FileName
+        $txtInstaller.ForeColor = [System.Drawing.Color]::Black
     }
 })
 
@@ -145,19 +166,19 @@ function Save-Catalog([string]$path, $entries) {
 $btnStart.Add_Click({
     try {
         $appNameRaw = $txtName.Text.Trim()
-        if (-not $appNameRaw) { throw "Ingresa un nombre de app." }
+        if (-not $appNameRaw -or $txtName.ForeColor -eq [System.Drawing.Color]::DimGray) { throw "Ingresa un nombre de app." }
         $appName = Sanitize-Name $appNameRaw
         $installerSrc = $txtInstaller.Text.Trim()
-        if (-not $installerSrc -or -not (Test-Path -LiteralPath $installerSrc)) {
+        if (-not $installerSrc -or -not (Test-Path -LiteralPath $installerSrc) -or $txtInstaller.ForeColor -eq [System.Drawing.Color]::DimGray) {
             throw "Selecciona un instalador válido."
         }
         $installerArgs = $txtArgs.Text.Trim()
         $exeRel = $txtExe.Text.Trim()
-        if (-not $exeRel) {
+        if (-not $exeRel -or $txtExe.ForeColor -eq [System.Drawing.Color]::DimGray) {
             $exeRel = "apps/$appName/bin/$appName.exe"
         }
         $wdRel = $txtWD.Text.Trim()
-        if (-not $wdRel) {
+        if (-not $wdRel -or $txtWD.ForeColor -eq [System.Drawing.Color]::DimGray) {
             $wdRel = Split-Path -Parent $exeRel
         }
 
@@ -174,27 +195,25 @@ $btnStart.Add_Click({
 
         $entry = @{
             name = $appName
-            installer = (Resolve-Path -LiteralPath $destInstaller).MakeRelativeUri((Resolve-Path -LiteralPath $here)).OriginalString -replace '^','installers/' -replace '//','/'
+            installer = ("installers/{0}" -f (Split-Path -Leaf $destInstaller))
+            installerArgs = $installerArgs
+            executable = $exeRel
+            launchArgs = ""
+            workingDir = $wdRel
+            dataPaths = @(
+                "data/$appName/AppData/Local",
+                "data/$appName/AppData/Roaming",
+                "data/$appName/ProgramData",
+                "data/$appName/UserProfile",
+                "data/$appName/Temp"
+            )
+            knownExternalPaths = @(
+                "%APPDATA%/$appName*",
+                "%LOCALAPPDATA%/$appName*",
+                "%PROGRAMDATA%/$appName*"
+            )
+            notes = ""
         }
-        # La conversión anterior puede ser compleja; mejor asignamos ruta relativa directa:
-        $entry.installer = ("installers/{0}" -f (Split-Path -Leaf $destInstaller))
-        $entry.installerArgs = $installerArgs
-        $entry.executable = $exeRel
-        $entry.launchArgs = ""
-        $entry.workingDir = $wdRel
-        $entry.dataPaths = @(
-            "data/$appName/AppData/Local",
-            "data/$appName/AppData/Roaming",
-            "data/$appName/ProgramData",
-            "data/$appName/UserProfile",
-            "data/$appName/Temp"
-        )
-        $entry.knownExternalPaths = @(
-            "%APPDATA%/$appName*",
-            "%LOCALAPPDATA%/$appName*",
-            "%PROGRAMDATA%/$appName*"
-        )
-        $entry.notes = ""
 
         $catalog += New-Object PSObject -Property $entry
         Save-Catalog -path $catalogPath -entries $catalog
