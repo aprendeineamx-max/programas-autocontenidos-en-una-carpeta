@@ -116,18 +116,15 @@ $txtExe = $exeField.TextBox
 $wdField = Add-Field -label "WorkingDir relativo (opcional)" -desc "Por defecto, la carpeta del ejecutable." -placeholder "apps\\MiApp\\bin" -y ([ref]$y)
 $txtWD = $wdField.TextBox
 
-$clientW = [int]$form.ClientSize.Width
-$clientH = [int]$form.ClientSize.Height
-
 $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Iniciar instalación portable"
 $btnStart.Width = 220
-$btnStart.Location = New-Object System.Drawing.Point($clientW - 240, $clientH - 60)
+$btnStart.Location = New-Object System.Drawing.Point(520, 470)
 
 $btnCancel = New-Object System.Windows.Forms.Button
 $btnCancel.Text = "Cancelar"
 $btnCancel.Width = 100
-$btnCancel.Location = New-Object System.Drawing.Point($clientW - 350, $clientH - 60)
+$btnCancel.Location = New-Object System.Drawing.Point(410, 470)
 
 $form.Controls.AddRange(@($title))
 $form.Controls.AddRange($nameField.Controls)
