@@ -58,8 +58,9 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
     $controls += $tb
 
     if ($placeholder) {
+        $ph = $placeholder
         $tb.ForeColor = [System.Drawing.Color]::DimGray
-        $tb.Text = $placeholder
+        $tb.Text = $ph
         $tb.Add_Enter({
             param($sender,$args)
             if ($sender.ForeColor -eq [System.Drawing.Color]::DimGray) {
@@ -71,7 +72,7 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
             param($sender,$args)
             if ([string]::IsNullOrWhiteSpace($sender.Text)) {
                 $sender.ForeColor = [System.Drawing.Color]::DimGray
-                $sender.Text = $placeholder
+                $sender.Text = $ph
             }
         })
     }
