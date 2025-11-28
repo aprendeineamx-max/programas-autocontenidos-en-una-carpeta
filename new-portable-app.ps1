@@ -15,7 +15,7 @@ $defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
-$form.Size = New-Object System.Drawing.Size(680,360)
+$form.Size = New-Object System.Drawing.Size(720,420)
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = 'FixedDialog'
 $form.MaximizeBox = $false
@@ -25,8 +25,17 @@ $title = New-Object System.Windows.Forms.Label
 $title.Text = "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..."
 $title.Location = New-Object System.Drawing.Point(10,10)
 $title.AutoSize = $true
-$title.MaximumSize = New-Object System.Drawing.Size(650,0)
+$title.MaximumSize = New-Object System.Drawing.Size(690,0)
 $title.Font = New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Bold)
+
+function New-Separator($y) {
+    $sep = New-Object System.Windows.Forms.Label
+    $sep.BorderStyle = 'Fixed3D'
+    $sep.Width = 670
+    $sep.Height = 2
+    $sep.Location = New-Object System.Drawing.Point(10,$y)
+    return $sep
+}
 
 function New-Label($text, $x, $y) {
     $lbl = New-Object System.Windows.Forms.Label
@@ -44,41 +53,62 @@ function New-Textbox($x,$y,$w) {
 
 $lblName = New-Label "Nombre de la app (ID):" 10 60
 $txtName = New-Textbox 250 57 330
+$lblNameDesc = New-Label "(Se usa como carpeta: apps/<ID> y data/<ID>)" 250 80
+$lblNameDesc.ForeColor = [System.Drawing.Color]::DimGray
+$lblNameDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
 
-$lblInstaller = New-Label "Instalador (.exe) a importar:" 10 90
-$txtInstaller = New-Textbox 250 87 240
+$lblInstaller = New-Label "Instalador (.exe) a importar:" 10 110
+$txtInstaller = New-Textbox 250 107 240
 $btnInstaller = New-Object System.Windows.Forms.Button
 $btnInstaller.Text = "Examinar..."
-$btnInstaller.Location = New-Object System.Drawing.Point(500,85)
+$btnInstaller.Location = New-Object System.Drawing.Point(500,105)
 $btnInstaller.Width = 80
+$lblInstallerDesc = New-Label "(Se copiará a installers/<ID>.exe)" 250 130
+$lblInstallerDesc.ForeColor = [System.Drawing.Color]::DimGray
+$lblInstallerDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
 
-$lblArgs = New-Label "Parámetros del instalador (/DIR={BIN} etc):" 10 120
-$txtArgs = New-Textbox 250 117 330
+$lblArgs = New-Label "Parámetros del instalador (/DIR={BIN} etc):" 10 160
+$txtArgs = New-Textbox 250 157 330
 $txtArgs.Text = $defaultArgs
+$lblArgsDesc = New-Label "(Usa tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE})" 250 180
+$lblArgsDesc.ForeColor = [System.Drawing.Color]::DimGray
+$lblArgsDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
 
-$lblExe = New-Label "Ejecutable relativo tras instalar (apps\\<App>\\bin\\*.exe):" 10 150
-$txtExe = New-Textbox 250 147 330
+$lblExe = New-Label "Ejecutable relativo tras instalar (apps\\<App>\\bin\\*.exe):" 10 210
+$txtExe = New-Textbox 250 207 330
+$lblExeDesc = New-Label "(Ejemplo: apps\\MiApp\\bin\\MiApp.exe)" 250 228
+$lblExeDesc.ForeColor = [System.Drawing.Color]::DimGray
+$lblExeDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
 
-$lblWD = New-Label "WorkingDir relativo (opcional):" 10 180
-$txtWD = New-Textbox 250 177 330
+$lblWD = New-Label "WorkingDir relativo (opcional):" 10 250
+$txtWD = New-Textbox 250 247 330
+$lblWDDesc = New-Label "(Por defecto, carpeta del ejecutable)" 250 268
+$lblWDDesc.ForeColor = [System.Drawing.Color]::DimGray
+$lblWDDesc.Font = New-Object System.Drawing.Font('Segoe UI',8)
 
 $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Iniciar instalación portable"
-$btnStart.Location = New-Object System.Drawing.Point(400, 230)
+$btnStart.Location = New-Object System.Drawing.Point(420, 300)
 $btnStart.Width = 210
 
 $btnCancel = New-Object System.Windows.Forms.Button
 $btnCancel.Text = "Cancelar"
-$btnCancel.Location = New-Object System.Drawing.Point(290,230)
+$btnCancel.Location = New-Object System.Drawing.Point(310,300)
 $btnCancel.Width = 90
 
 $form.Controls.AddRange(@(
     $title,
-    $lblName,$txtName,
-    $lblInstaller,$txtInstaller,$btnInstaller,
-    $lblArgs,$txtArgs,
-    $lblExe,$txtExe,
-    $lblWD,$txtWD,
+    (New-Separator 40),
+    $lblName,$txtName,$lblNameDesc,
+    (New-Separator 95),
+    $lblInstaller,$txtInstaller,$btnInstaller,$lblInstallerDesc,
+    (New-Separator 145),
+    $lblArgs,$txtArgs,$lblArgsDesc,
+    (New-Separator 195),
+    $lblExe,$txtExe,$lblExeDesc,
+    (New-Separator 235),
+    $lblWD,$txtWD,$lblWDDesc,
+    (New-Separator 285),
     $btnStart,$btnCancel
 ))
 
