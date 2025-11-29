@@ -63,7 +63,7 @@ function New-TextBox {
     param(
         [string]$Text,
         [string]$Placeholder = "",
-        [System.Drawing.Color]$HintColor = $null,
+        [System.Drawing.Color]$HintColor = [System.Drawing.Color]::Gray,
         [System.Drawing.Color]$BackColor = $null,
         [System.Drawing.Color]$TextColor = $null
     )
