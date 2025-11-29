@@ -12,7 +12,38 @@ Add-Type -AssemblyName System.Drawing
 
 $defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
 
-# Helpers
+function Get-Themes {
+    return @{
+        "Deep Obsidian" = @{
+            BackColor   = [System.Drawing.Color]::FromArgb(26,28,34)
+            PanelColor  = [System.Drawing.Color]::FromArgb(38,40,48)
+            TextColor   = [System.Drawing.Color]::FromArgb(230,232,236)
+            HintColor   = [System.Drawing.Color]::FromArgb(140,140,150)
+            Accent      = [System.Drawing.Color]::FromArgb(88,140,255)
+            ButtonBack  = [System.Drawing.Color]::FromArgb(46,50,60)
+            BorderColor = [System.Drawing.Color]::FromArgb(60,60,70)
+        }
+        "Claro" = @{
+            BackColor   = [System.Drawing.Color]::White
+            PanelColor  = [System.Drawing.Color]::FromArgb(245,245,245)
+            TextColor   = [System.Drawing.Color]::FromArgb(20,20,20)
+            HintColor   = [System.Drawing.Color]::FromArgb(110,110,110)
+            Accent      = [System.Drawing.Color]::FromArgb(70,120,255)
+            ButtonBack  = [System.Drawing.Color]::FromArgb(235,235,235)
+            BorderColor = [System.Drawing.Color]::FromArgb(210,210,210)
+        }
+        "Gris" = @{
+            BackColor   = [System.Drawing.Color]::FromArgb(232,232,236)
+            PanelColor  = [System.Drawing.Color]::FromArgb(244,244,247)
+            TextColor   = [System.Drawing.Color]::FromArgb(25,25,25)
+            HintColor   = [System.Drawing.Color]::FromArgb(120,120,130)
+            Accent      = [System.Drawing.Color]::FromArgb(64,96,180)
+            ButtonBack  = [System.Drawing.Color]::FromArgb(220,220,225)
+            BorderColor = [System.Drawing.Color]::FromArgb(200,200,205)
+        }
+    }
+}
+
 function New-Label {
     param(
         [string]$Text,
@@ -31,19 +62,24 @@ function New-Label {
 function New-TextBox {
     param(
         [string]$Text,
-        [string]$Placeholder = ""
+        [string]$Placeholder = "",
+        [System.Drawing.Color]$HintColor = $null,
+        [System.Drawing.Color]$BackColor = $null,
+        [System.Drawing.Color]$TextColor = $null
     )
     $tb = New-Object System.Windows.Forms.TextBox
     $tb.Text = $Text
     $tb.Dock = 'Fill'
     $tb.Margin = '3,3,3,3'
+    if ($BackColor) { $tb.BackColor = $BackColor }
+    if ($TextColor) { $tb.ForeColor = $TextColor }
     if ($Placeholder -and -not $Text) {
         $tb.Text = $Placeholder
         $tb.Tag = $Placeholder
-        $tb.ForeColor = [System.Drawing.Color]::Gray
+        if ($HintColor) { $tb.ForeColor = $HintColor } else { $tb.ForeColor = [System.Drawing.Color]::Gray }
         $tb.Add_Enter({
             param($s,$e)
-            if ($s.ForeColor -eq [System.Drawing.Color]::Gray -and $s.Text -eq $s.Tag) {
+            if ($s.Text -eq $s.Tag -and $s.ForeColor -ne [System.Drawing.Color]::Black) {
                 $s.Text = ""
                 $s.ForeColor = [System.Drawing.Color]::Black
             }
@@ -52,14 +88,13 @@ function New-TextBox {
             param($s,$e)
             if ([string]::IsNullOrWhiteSpace($s.Text)) {
                 $s.Text = $s.Tag
-                $s.ForeColor = [System.Drawing.Color]::Gray
+                $s.ForeColor = $HintColor
             }
         })
     }
     return $tb
 }
 
-# Form
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
 $form.Size = New-Object System.Drawing.Size(720,520)
@@ -68,6 +103,9 @@ $form.FormBorderStyle = 'Sizable'
 $form.MaximizeBox = $true
 $form.MinimizeBox = $true
 $form.Font = New-Object System.Drawing.Font('Segoe UI', 9)
+
+$themes = Get-Themes
+$currentTheme = $themes["Deep Obsidian"]
 
 $main = New-Object System.Windows.Forms.TableLayoutPanel
 $main.Dock = 'Fill'
@@ -79,12 +117,27 @@ $main.AutoSize = $true
 $main.GrowStyle = 'AddRows'
 
 $bold = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Bold)
-$hintColor = [System.Drawing.Color]::FromArgb(110,110,110)
+$hintColor = $currentTheme.HintColor
+
+# Panel de tema
+$themePanel = New-Object System.Windows.Forms.FlowLayoutPanel
+$themePanel.Dock = 'Top'
+$themePanel.AutoSize = $true
+$themePanel.Margin = '0,0,0,10'
+$lblTheme = New-Label -Text "Tema:" -Font (New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Bold))
+$cmbTheme = New-Object System.Windows.Forms.ComboBox
+$cmbTheme.DropDownStyle = 'DropDownList'
+$cmbTheme.Width = 180
+$cmbTheme.Items.AddRange($themes.Keys)
+$cmbTheme.SelectedItem = "Deep Obsidian"
+$themePanel.Controls.Add($lblTheme)
+$themePanel.Controls.Add($cmbTheme)
 
 # Título principal
 $title = New-Label -Text "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..." -Font $bold
 $title.MaximumSize = New-Object System.Drawing.Size(700,0)
 $title.Margin = '3,3,3,8'
+$main.Controls.Add($themePanel)
 $main.Controls.Add($title)
 
 function Add-FieldRow {
@@ -137,22 +190,25 @@ function Add-FieldRow {
 }
 
 # Campos
-$txtName = New-TextBox -Text "" -Placeholder "MiApp"
+$txtName = New-TextBox -Text "" -Placeholder "MiApp" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
 Add-FieldRow -Label "Nombre de la app (ID)" -Description "Se usa como carpeta: apps/<ID> y data/<ID>." -InputControl $txtName
 
-$txtInstaller = New-TextBox -Text "" -Placeholder "Selecciona instalador .exe"
+$txtInstaller = New-TextBox -Text "" -Placeholder "Selecciona instalador .exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
 $btnBrowse = New-Object System.Windows.Forms.Button
 $btnBrowse.Text = "Examinar..."
 $btnBrowse.FlatStyle = 'Flat'
+$btnBrowse.BackColor = $currentTheme.ButtonBack
+$btnBrowse.ForeColor = $currentTheme.TextColor
+$btnBrowse.Margin = '6,3,3,3'
 Add-FieldRow -Label "Instalador (.exe) a importar" -Description "Se copiara a installers/<ID>.exe" -InputControl $txtInstaller -ButtonControl $btnBrowse
 
-$txtArgs = New-TextBox -Text $defaultArgs
+$txtArgs = New-TextBox -Text $defaultArgs -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
 Add-FieldRow -Label "Parametros del instalador (/DIR={BIN} etc)" -Description "Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -InputControl $txtArgs
 
-$txtExe = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin\\MiApp.exe"
+$txtExe = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin\\MiApp.exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
 Add-FieldRow -Label "Ejecutable relativo tras instalar" -Description "Ejemplo: apps\\MiApp\\bin\\MiApp.exe" -InputControl $txtExe
 
-$txtWD = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin"
+$txtWD = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
 Add-FieldRow -Label "WorkingDir relativo (opcional)" -Description "Por defecto, la carpeta del ejecutable." -InputControl $txtWD
 
 # Botones inferiores
@@ -161,7 +217,7 @@ $btnStart.Text = "Iniciar instalacion portable"
 $btnStart.Width = 200
 $btnStart.Height = 32
 $btnStart.FlatStyle = 'Flat'
-$btnStart.BackColor = [System.Drawing.Color]::FromArgb(70,120,255)
+$btnStart.BackColor = $currentTheme.Accent
 $btnStart.ForeColor = [System.Drawing.Color]::White
 $btnStart.Font = $bold
 
@@ -170,7 +226,8 @@ $btnCancel.Text = "Cancelar"
 $btnCancel.Width = 100
 $btnCancel.Height = 32
 $btnCancel.FlatStyle = 'Flat'
-$btnCancel.BackColor = [System.Drawing.Color]::FromArgb(230,230,230)
+$btnCancel.BackColor = $currentTheme.ButtonBack
+$btnCancel.ForeColor = $currentTheme.TextColor
 
 $buttons = New-Object System.Windows.Forms.FlowLayoutPanel
 $buttons.FlowDirection = 'RightToLeft'
@@ -182,7 +239,6 @@ $buttons.Controls.Add($btnCancel)
 
 $form.Controls.Add($buttons)
 $form.Controls.Add($main)
-$main.Controls.Add($title)
 
 # Browse
 $ofd = New-Object System.Windows.Forms.OpenFileDialog
@@ -196,6 +252,46 @@ $btnBrowse.Add_Click({
 })
 
 $btnCancel.Add_Click({ $form.Close() })
+
+function Apply-Theme($name) {
+    $t = $themes[$name]
+    if (-not $t) { return }
+    $form.BackColor = $t.BackColor
+    $main.BackColor = $t.BackColor
+    foreach ($container in $main.Controls) {
+        $container.BackColor = $t.BackColor
+        foreach ($ctrl in $container.Controls) {
+            if ($ctrl -is [System.Windows.Forms.Label]) {
+                if ($ctrl.Font.Bold) { $ctrl.ForeColor = $t.TextColor } else { $ctrl.ForeColor = $t.HintColor }
+            }
+            if ($ctrl -is [System.Windows.Forms.TableLayoutPanel] -or $ctrl -is [System.Windows.Forms.FlowLayoutPanel]) {
+                $ctrl.BackColor = $t.BackColor
+                foreach ($inner in $ctrl.Controls) {
+                    if ($inner -is [System.Windows.Forms.TextBox]) {
+                        $inner.BackColor = $t.PanelColor
+                        if ($inner.ForeColor -ne [System.Drawing.Color]::Gray) { $inner.ForeColor = $t.TextColor }
+                    }
+                    if ($inner -is [System.Windows.Forms.Label]) {
+                        if ($inner.Font.Bold) { $inner.ForeColor = $t.TextColor } else { $inner.ForeColor = $t.HintColor }
+                    }
+                    if ($inner -is [System.Windows.Forms.Button]) {
+                        $inner.BackColor = $t.ButtonBack
+                        $inner.ForeColor = $t.TextColor
+                        if ($inner -eq $btnStart) { $inner.BackColor = $t.Accent; $inner.ForeColor = [System.Drawing.Color]::White }
+                    }
+                }
+            }
+        }
+    }
+    $btnStart.BackColor = $t.Accent
+    $btnStart.ForeColor = [System.Drawing.Color]::White
+    $btnCancel.BackColor = $t.ButtonBack
+    $btnCancel.ForeColor = $t.TextColor
+}
+
+$cmbTheme.Add_SelectedIndexChanged({
+    Apply-Theme -name $cmbTheme.SelectedItem
+})
 
 function Sanitize-Name($name) {
     $safe = $name -replace '[^a-zA-Z0-9_.-]', '_'
@@ -289,5 +385,8 @@ $btnStart.Add_Click({
         [System.Windows.Forms.MessageBox]::Show($_.Exception.Message, "Error", 'OK', 'Error') | Out-Null
     }
 })
+
+$cmbTheme.Add_SelectedIndexChanged({ Apply-Theme -name $cmbTheme.SelectedItem })
+Apply-Theme -name $cmbTheme.SelectedItem
 
 [void]$form.ShowDialog()
