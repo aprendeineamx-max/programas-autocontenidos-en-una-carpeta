@@ -101,7 +101,6 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
 
     $btn = $null
     if ($HasButton) {
-        if ($tb -is [System.Array]) { $tb = $tb | Select-Object -First 1 }
         $btn = New-Object System.Windows.Forms.Button
         $btn.Text = "Examinar..."
         $btn.Width = 120
@@ -109,7 +108,7 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
         $btn.FlatStyle = 'Flat'
         $btn.BackColor = [System.Drawing.Color]::FromArgb(235,239,247)
         $btn.Anchor = 'Top,Right'
-        $btn.Location = New-Object System.Drawing.Point($tb.Left + $tb.Width + 10, $tb.Top - 1)
+        $btn.Location = New-Object System.Drawing.Point($margin + $tbWidth + 10, $y.Value - 26 - 1)
         $controls += $btn
     }
 
