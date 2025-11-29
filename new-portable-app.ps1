@@ -9,72 +9,87 @@ Initialize-PortableRoot | Out-Null
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
+Add-Type -AssemblyName System.Drawing.Drawing2D
 
 $defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
+$baseFont = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Regular)
+$baseFontBold = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Bold)
+$hintColor = [System.Drawing.Color]::FromArgb(120,120,120)
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
-$form.Size = New-Object System.Drawing.Size(760,560)
+$form.Size = New-Object System.Drawing.Size(820, 620)
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = 'FixedDialog'
 $form.MaximizeBox = $false
 $form.MinimizeBox = $false
+$form.Font = $baseFont
 
-$title = New-Object System.Windows.Forms.Label
-$title.Text = "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..."
-$title.Location = New-Object System.Drawing.Point(12,12)
-$title.AutoSize = $true
-$title.MaximumSize = New-Object System.Drawing.Size(720,0)
-$title.Font = New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Bold)
+# Gradiente de fondo
+$form.Add_Paint({
+    param($sender,$e)
+    $rect = $sender.ClientRectangle
+    $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,
+        [System.Drawing.Color]::FromArgb(245,248,252),
+        [System.Drawing.Color]::FromArgb(225,232,245),
+        90)
+    $e.Graphics.FillRectangle($brush, $rect)
+    $brush.Dispose()
+})
 
-function New-Label($text, $x, $y) {
+function New-Label($text, $x, $y, [System.Drawing.Font]$font = $baseFont) {
     $lbl = New-Object System.Windows.Forms.Label
     $lbl.Text = $text
     $lbl.Location = New-Object System.Drawing.Point($x,$y)
     $lbl.AutoSize = $true
+    $lbl.Font = $font
+    $lbl.BackColor = [System.Drawing.Color]::Transparent
     return $lbl
 }
 function New-Textbox($x,$y,$w) {
     $tb = New-Object System.Windows.Forms.TextBox
     $tb.Location = New-Object System.Drawing.Point($x,$y)
     $tb.Width = $w
+    $tb.BorderStyle = 'FixedSingle'
+    $tb.BackColor = [System.Drawing.Color]::White
+    $tb.Font = $baseFont
     return $tb
 }
 
+# Campos
 $y = 50
-$x = 12
-$w = 720
+$xLabel = 20
+$xBox = 20
+$wBox = 760
+$gap = 18
 
 function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[switch]$HasButton) {
     $controls = @()
-    $lbl = New-Label $label $x $($y.Value)
-    $lbl.Font = New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Regular)
+    $lbl = New-Label $label $xLabel $($y.Value) $baseFontBold
     $controls += $lbl
-    $y.Value += 20
+    $y.Value += $gap
 
-    $tbWidth = $w - 40
-    if ($HasButton) { $tbWidth -= 120 }
-    $tb = New-Textbox $x $($y.Value) $tbWidth
+    $tbWidth = $wBox - 20
+    if ($HasButton) { $tbWidth -= 140 }
+    $tb = New-Textbox $xBox $($y.Value) $tbWidth
     $controls += $tb
 
     if ($placeholder) {
         $tb.Tag = $placeholder
-        $tb.ForeColor = [System.Drawing.Color]::DimGray
+        $tb.ForeColor = $hintColor
         $tb.Text = $placeholder
         $tb.Add_Enter({
             param($sender,$args)
-            $ph = $sender.Tag
-            if ($sender.ForeColor -eq [System.Drawing.Color]::DimGray -and $sender.Text -eq $ph) {
+            if ($sender.ForeColor -eq $hintColor -and $sender.Text -eq $sender.Tag) {
                 $sender.Text = ""
                 $sender.ForeColor = [System.Drawing.Color]::Black
             }
         })
         $tb.Add_Leave({
             param($sender,$args)
-            $ph = $sender.Tag
             if ([string]::IsNullOrWhiteSpace($sender.Text)) {
-                $sender.ForeColor = [System.Drawing.Color]::DimGray
-                $sender.Text = $ph
+                $sender.ForeColor = $hintColor
+                $sender.Text = $sender.Tag
             }
         })
     }
@@ -83,20 +98,20 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
     if ($HasButton) {
         $btn = New-Object System.Windows.Forms.Button
         $btn.Text = "Examinar..."
-        $btn.Width = 100
-        $btnX = $x + $tbWidth + 20
-        $btnY = $y.Value - 26 - 1
-        $btn.Location = New-Object System.Drawing.Point($btnX, $btnY)
+        $btn.Width = 120
+        $btn.Height = 26
+        $btn.FlatStyle = 'Flat'
+        $btn.BackColor = [System.Drawing.Color]::FromArgb(235,239,247)
+        $btn.Location = New-Object System.Drawing.Point($tb.Left + $tb.Width + 10, $tb.Top - 1)
         $controls += $btn
     }
 
-    $y.Value += 26
+    $y.Value += 28
     if ($desc) {
-        $descLbl = New-Label $desc $x $($y.Value)
-        $descLbl.ForeColor = [System.Drawing.Color]::DimGray
-        $descLbl.Font = New-Object System.Drawing.Font('Segoe UI',8)
+        $descLbl = New-Label $desc $xLabel $($y.Value) $baseFont
+        $descLbl.ForeColor = $hintColor
         $controls += $descLbl
-        $y.Value += 26
+        $y.Value += 24
     } else {
         $y.Value += 10
     }
@@ -106,7 +121,7 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
 $nameField = Add-Field -label "Nombre de la app (ID)" -desc "Se usa como carpeta: apps/<ID> y data/<ID>." -placeholder "MiApp" -y ([ref]$y)
 $txtName = $nameField.TextBox
 
-$installerField = Add-Field -label "Instalador (.exe) a importar" -desc "Se copiará a installers/<ID>.exe" -placeholder "Selecciona un .exe" -y ([ref]$y) -HasButton
+$installerField = Add-Field -label "Instalador (.exe) a importar" -desc "Se copiará a installers/<ID>.exe" -placeholder "Selecciona un instalador .exe" -y ([ref]$y) -HasButton
 $txtInstaller = $installerField.TextBox
 $btnInstaller = $installerField.Button
 
@@ -121,15 +136,26 @@ $txtExe = $exeField.TextBox
 $wdField = Add-Field -label "WorkingDir relativo (opcional)" -desc "Por defecto, la carpeta del ejecutable." -placeholder "apps\\MiApp\\bin" -y ([ref]$y)
 $txtWD = $wdField.TextBox
 
+# Botones
 $btnStart = New-Object System.Windows.Forms.Button
-$btnStart.Text = "Iniciar instalación portable"
-$btnStart.Width = 220
-$btnStart.Location = New-Object System.Drawing.Point(520, 470)
+$btnStart.Text = "Iniciar instalacion portable"
+$btnStart.Width = 230
+$btnStart.Height = 32
+$btnStart.FlatStyle = 'Flat'
+$btnStart.BackColor = [System.Drawing.Color]::FromArgb(70,120,255)
+$btnStart.ForeColor = [System.Drawing.Color]::White
+$btnStart.Font = $baseFontBold
+$btnStart.Location = New-Object System.Drawing.Point($form.ClientSize.Width - 250, $form.ClientSize.Height - 80)
+$btnStart.Anchor = 'Bottom,Right'
 
 $btnCancel = New-Object System.Windows.Forms.Button
 $btnCancel.Text = "Cancelar"
-$btnCancel.Width = 100
-$btnCancel.Location = New-Object System.Drawing.Point(410, 470)
+$btnCancel.Width = 120
+$btnCancel.Height = 32
+$btnCancel.FlatStyle = 'Flat'
+$btnCancel.BackColor = [System.Drawing.Color]::FromArgb(230,230,230)
+$btnCancel.Location = New-Object System.Drawing.Point($form.ClientSize.Width - 380, $form.ClientSize.Height - 80)
+$btnCancel.Anchor = 'Bottom,Right'
 
 $form.Controls.AddRange(@($title))
 $form.Controls.AddRange($nameField.Controls)
@@ -139,6 +165,7 @@ $form.Controls.AddRange($exeField.Controls)
 $form.Controls.AddRange($wdField.Controls)
 $form.Controls.AddRange(@($btnStart,$btnCancel))
 
+# Eventos
 $ofd = New-Object System.Windows.Forms.OpenFileDialog
 $ofd.Filter = "Executables (*.exe)|*.exe|All files (*.*)|*.*"
 $ofd.Title = "Selecciona el instalador"
@@ -154,7 +181,7 @@ $btnCancel.Add_Click({ $form.Close() })
 
 function Sanitize-Name($name) {
     $safe = $name -replace '[^a-zA-Z0-9_.-]', '_'
-    if ([string]::IsNullOrWhiteSpace($safe)) { throw "Nombre inválido." }
+    if ([string]::IsNullOrWhiteSpace($safe)) { throw "Nombre invalido." }
     return $safe
 }
 
@@ -173,19 +200,21 @@ function Save-Catalog([string]$path, $entries) {
 $btnStart.Add_Click({
     try {
         $appNameRaw = $txtName.Text.Trim()
-        if (-not $appNameRaw -or $txtName.ForeColor -eq [System.Drawing.Color]::DimGray) { throw "Ingresa un nombre de app." }
+        if (-not $appNameRaw -or $txtName.ForeColor -eq $hintColor) { throw "Ingresa un nombre de app." }
         $appName = Sanitize-Name $appNameRaw
+
         $installerSrc = $txtInstaller.Text.Trim()
-        if (-not $installerSrc -or -not (Test-Path -LiteralPath $installerSrc) -or $txtInstaller.ForeColor -eq [System.Drawing.Color]::DimGray) {
-            throw "Selecciona un instalador válido."
+        if (-not $installerSrc -or -not (Test-Path -LiteralPath $installerSrc) -or $txtInstaller.ForeColor -eq $hintColor) {
+            throw "Selecciona un instalador valido."
         }
+
         $installerArgs = $txtArgs.Text.Trim()
         $exeRel = $txtExe.Text.Trim()
-        if (-not $exeRel -or $txtExe.ForeColor -eq [System.Drawing.Color]::DimGray) {
+        if (-not $exeRel -or $txtExe.ForeColor -eq $hintColor) {
             $exeRel = "apps/$appName/bin/$appName.exe"
         }
         $wdRel = $txtWD.Text.Trim()
-        if (-not $wdRel -or $txtWD.ForeColor -eq [System.Drawing.Color]::DimGray) {
+        if (-not $wdRel -or $txtWD.ForeColor -eq $hintColor) {
             $wdRel = Split-Path -Parent $exeRel
         }
 
@@ -225,7 +254,6 @@ $btnStart.Add_Click({
         $catalog += New-Object PSObject -Property $entry
         Save-Catalog -path $catalogPath -entries $catalog
 
-        # Ejecutar rehidratado de la app
         $rehydrate = Join-Path $here 'rehydrate-all.ps1'
         $psi = New-Object System.Diagnostics.ProcessStartInfo
         $psi.FileName = 'powershell.exe'
@@ -234,9 +262,9 @@ $btnStart.Add_Click({
         $proc = [System.Diagnostics.Process]::Start($psi)
         $proc.WaitForExit()
         if ($proc.ExitCode -ne 0) {
-            [System.Windows.Forms.MessageBox]::Show("Instalación portable finalizó con código $($proc.ExitCode). Revisa la consola.", "Advertencia", 'OK', 'Warning') | Out-Null
+            [System.Windows.Forms.MessageBox]::Show("Instalacion portable finalizo con codigo $($proc.ExitCode). Revisa la consola.", "Advertencia", 'OK', 'Warning') | Out-Null
         } else {
-            [System.Windows.Forms.MessageBox]::Show("App '$appName' agregada al catálogo y rehidratada.", "Listo", 'OK', 'Information') | Out-Null
+            [System.Windows.Forms.MessageBox]::Show("App '$appName' agregada al catalogo y rehidratada.", "Listo", 'OK', 'Information') | Out-Null
         }
         $form.Close()
     } catch {
