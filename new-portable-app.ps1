@@ -10,7 +10,8 @@ Initialize-PortableRoot | Out-Null
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
+# Args por defecto (Inno Setup): ubicación, silencio, sin reinicio, sin splash, con log en data/<App>
+$defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /LOG="{DATA}\\install.log"'
 
 function Get-Themes {
     return @{
