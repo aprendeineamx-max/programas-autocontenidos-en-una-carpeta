@@ -81,6 +81,12 @@ $main.GrowStyle = 'AddRows'
 $bold = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Bold)
 $hintColor = [System.Drawing.Color]::FromArgb(110,110,110)
 
+# Título principal
+$title = New-Label -Text "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..." -Font $bold
+$title.MaximumSize = New-Object System.Drawing.Size(700,0)
+$title.Margin = '3,3,3,8'
+$main.Controls.Add($title)
+
 function Add-FieldRow {
     param(
         [string]$Label,
