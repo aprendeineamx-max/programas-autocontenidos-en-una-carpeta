@@ -11,7 +11,7 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 # Args por defecto (Inno Setup): ubicación, silencio, sin reinicio, sin splash, con log en data/<App>
-$defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /LOG="{DATA}\\install.log"'
+$defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /LOG="{DATA}\install.log"'
 
 function Get-Themes {
     return @{
@@ -22,16 +22,14 @@ function Get-Themes {
             HintColor   = [System.Drawing.Color]::FromArgb(140,140,150)
             Accent      = [System.Drawing.Color]::FromArgb(88,140,255)
             ButtonBack  = [System.Drawing.Color]::FromArgb(46,50,60)
-            BorderColor = [System.Drawing.Color]::FromArgb(60,60,70)
         }
         "Dark" = @{
-            BackColor   = [System.Drawing.Color]::FromArgb(28,30,36)
+            BackColor   = [System.Drawing.Color]::FromArgb(30,32,38)
             PanelColor  = [System.Drawing.Color]::FromArgb(42,44,52)
             TextColor   = [System.Drawing.Color]::FromArgb(242,244,248)
-            HintColor   = [System.Drawing.Color]::FromArgb(180,182,190)
-            Accent      = [System.Drawing.Color]::FromArgb(100,155,255)
-            ButtonBack  = [System.Drawing.Color]::FromArgb(60,64,74)
-            BorderColor = [System.Drawing.Color]::FromArgb(85,88,98)
+            HintColor   = [System.Drawing.Color]::FromArgb(175,177,185)
+            Accent      = [System.Drawing.Color]::FromArgb(96,152,255)
+            ButtonBack  = [System.Drawing.Color]::FromArgb(62,64,74)
         }
         "Claro" = @{
             BackColor   = [System.Drawing.Color]::White
@@ -40,7 +38,6 @@ function Get-Themes {
             HintColor   = [System.Drawing.Color]::FromArgb(110,110,110)
             Accent      = [System.Drawing.Color]::FromArgb(70,120,255)
             ButtonBack  = [System.Drawing.Color]::FromArgb(235,235,235)
-            BorderColor = [System.Drawing.Color]::FromArgb(210,210,210)
         }
         "Gris" = @{
             BackColor   = [System.Drawing.Color]::FromArgb(232,232,236)
@@ -49,7 +46,6 @@ function Get-Themes {
             HintColor   = [System.Drawing.Color]::FromArgb(120,120,130)
             Accent      = [System.Drawing.Color]::FromArgb(64,96,180)
             ButtonBack  = [System.Drawing.Color]::FromArgb(220,220,225)
-            BorderColor = [System.Drawing.Color]::FromArgb(200,200,205)
         }
     }
 }
@@ -57,8 +53,8 @@ function Get-Themes {
 function New-Label {
     param(
         [string]$Text,
-        [System.Drawing.Font]$Font,
-        [System.Drawing.Color]$ForeColor
+        [System.Drawing.Font]$Font = $null,
+        [System.Drawing.Color]$ForeColor = $null
     )
     $lbl = New-Object System.Windows.Forms.Label
     $lbl.Text = $Text
@@ -86,7 +82,7 @@ function New-TextBox {
     if ($Placeholder -and -not $Text) {
         $tb.Text = $Placeholder
         $tb.Tag = $Placeholder
-        if ($HintColor) { $tb.ForeColor = $HintColor } else { $tb.ForeColor = [System.Drawing.Color]::Gray }
+        $tb.ForeColor = $HintColor
         $tb.Add_Enter({
             param($s,$e)
             if ($s.Text -eq $s.Tag -and $s.ForeColor -ne [System.Drawing.Color]::Black) {
@@ -101,13 +97,15 @@ function New-TextBox {
                 $s.ForeColor = $HintColor
             }
         })
+    } elseif (-not $Placeholder -and $TextColor) {
+        $tb.ForeColor = $TextColor
     }
     return $tb
 }
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
-$form.Size = New-Object System.Drawing.Size(720,520)
+$form.Size = New-Object System.Drawing.Size(920,640)
 $form.StartPosition = 'CenterScreen'
 $form.FormBorderStyle = 'Sizable'
 $form.MaximizeBox = $true
@@ -116,6 +114,8 @@ $form.Font = New-Object System.Drawing.Font('Segoe UI', 9)
 
 $themes = Get-Themes
 $currentTheme = $themes["Dark"]
+$textColor = $currentTheme.TextColor
+$hintColor = $currentTheme.HintColor
 
 $main = New-Object System.Windows.Forms.TableLayoutPanel
 $main.Dock = 'Fill'
@@ -127,14 +127,13 @@ $main.AutoSize = $true
 $main.GrowStyle = 'AddRows'
 
 $bold = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Bold)
-$hintColor = $currentTheme.HintColor
 
 # Panel de tema
 $themePanel = New-Object System.Windows.Forms.FlowLayoutPanel
 $themePanel.Dock = 'Top'
 $themePanel.AutoSize = $true
 $themePanel.Margin = '0,0,0,10'
-$lblTheme = New-Label -Text "Tema:" -Font (New-Object System.Drawing.Font('Segoe UI',9,[System.Drawing.FontStyle]::Bold))
+$lblTheme = New-Label -Text "Tema:" -Font $bold -ForeColor $textColor
 $cmbTheme = New-Object System.Windows.Forms.ComboBox
 $cmbTheme.DropDownStyle = 'DropDownList'
 $cmbTheme.Width = 180
@@ -144,20 +143,13 @@ $themePanel.Controls.Add($lblTheme)
 $themePanel.Controls.Add($cmbTheme)
 
 # Título principal
-$title = New-Label -Text "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..." -Font $bold
-$title.MaximumSize = New-Object System.Drawing.Size(700,0)
+$title = New-Label -Text "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..." -Font $bold -ForeColor $textColor
+$title.MaximumSize = New-Object System.Drawing.Size(880,0)
 $title.Margin = '3,3,3,8'
 $main.Controls.Add($themePanel)
 $main.Controls.Add($title)
 
-# Panel de checks (flags comunes)
-$checksPanel = New-Object System.Windows.Forms.FlowLayoutPanel
-$checksPanel.AutoSize = $true
-$checksPanel.Dock = 'Top'
-$checksPanel.FlowDirection = 'LeftToRight'
-$checksPanel.WrapContents = $true
-$checksPanel.Margin = '0,0,0,5'
-
+# Checkboxes helpers
 function New-Check($text, [bool]$state) {
     $cb = New-Object System.Windows.Forms.CheckBox
     $cb.Text = $text
@@ -166,6 +158,13 @@ function New-Check($text, [bool]$state) {
     $cb.Margin = '0,0,10,5'
     return $cb
 }
+
+$checksPanel = New-Object System.Windows.Forms.FlowLayoutPanel
+$checksPanel.AutoSize = $true
+$checksPanel.Dock = 'Top'
+$checksPanel.FlowDirection = 'LeftToRight'
+$checksPanel.WrapContents = $true
+$checksPanel.Margin = '0,0,0,5'
 
 $cbDir       = New-Check '/DIR="{BIN}"' $true
 $cbSilent    = New-Check '/VERYSILENT' $true
@@ -176,11 +175,14 @@ $cbLog       = New-Check '/LOG="{DATA}\install.log"' $true
 $cbNoIcons   = New-Check '/NOICONS' $false
 $cbMergeNoIcons = New-Check '/MERGETASKS="!desktopicon,!startmenuicon"' $false
 $cbCurrentUser = New-Check '/CURRENTUSER' $false
+$cbAllUsers  = New-Check '/ALLUSERS' $false
 $cbNoCancel  = New-Check '/NOCANCEL' $false
 $cbNoClose   = New-Check '/NOCLOSEAPPLICATIONS' $false
+$cbCloseApps = New-Check '/CLOSEAPPLICATIONS' $false
+$cbForceClose = New-Check '/FORCECLOSEAPPLICATIONS' $false
 $checksPanel.Controls.AddRange(@(
     $cbDir,$cbSilent,$cbSuppress,$cbNoRestart,$cbSP,$cbLog,
-    $cbNoIcons,$cbMergeNoIcons,$cbCurrentUser,$cbNoCancel,$cbNoClose
+    $cbNoIcons,$cbMergeNoIcons,$cbCurrentUser,$cbAllUsers,$cbNoCancel,$cbNoClose,$cbCloseApps,$cbForceClose
 ))
 
 # Panel avanzado (lang/tasks/components/inf)
@@ -201,11 +203,11 @@ function Add-AdvancedRow($label,$control) {
     $advancedPanel.RowCount += 1
 }
 
-$txtLang = New-TextBox -Text "" -Placeholder "es" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
-$txtTasks = New-TextBox -Text "" -Placeholder "task1,task2" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
-$txtComponents = New-TextBox -Text "" -Placeholder "comp1,comp2" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
-$txtLoadInf = New-TextBox -Text "" -Placeholder "ruta\\setup.inf" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
-$txtSaveInf = New-TextBox -Text "" -Placeholder "ruta\\respuesta.inf" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtLang = New-TextBox -Text "" -Placeholder "es" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+$txtTasks = New-TextBox -Text "" -Placeholder "task1,task2" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+$txtComponents = New-TextBox -Text "" -Placeholder "comp1,comp2" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+$txtLoadInf = New-TextBox -Text "" -Placeholder "ruta\\setup.inf" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+$txtSaveInf = New-TextBox -Text "" -Placeholder "ruta\\respuesta.inf" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
 $cbLoadInf = New-Check '/LOADINF' $false
 $cbSaveInf = New-Check '/SAVEINF' $false
 
@@ -234,8 +236,8 @@ $savePanel.Controls.Add($txtSaveInf,1,0)
 Add-AdvancedRow "LOADINF (opcional):" $loadPanel
 Add-AdvancedRow "SAVEINF (opcional):" $savePanel
 
-$infoFlags = New-Label -Text "Opciones recomendadas ya vienen marcadas. Avanzadas (LANG/TASKS/COMPONENTS/LOADINF/SAVEINF) úsalo solo si el instalador las soporta." -ForeColor $hintColor
-$infoFlags.MaximumSize = New-Object System.Drawing.Size(700,0)
+$infoFlags = New-Label -Text "Opciones recomendadas ya vienen marcadas. Avanzadas (LANG/TASKS/COMPONENTS/LOADINF/SAVEINF) solo si el instalador las soporta. /ALLUSERS o /CURRENTUSER según se requiera; /NOICONS y /MERGETASKS para evitar accesos directos; /NOCANCEL y /NOCLOSEAPPLICATIONS solo si quieres forzar sin intervención; /CLOSEAPPLICATIONS y /FORCECLOSEAPPLICATIONS reinician procesos, úsalo con cautela." -ForeColor $hintColor
+$infoFlags.MaximumSize = New-Object System.Drawing.Size(880,0)
 $main.Controls.Add($infoFlags)
 $main.Controls.Add($checksPanel)
 $main.Controls.Add($advancedPanel)
@@ -270,7 +272,7 @@ function Add-FieldRow {
         $panel.Controls.Add($InputControl,0,0)
     }
 
-    $lbl = New-Label -Text $Label -Font $bold
+    $lbl = New-Label -Text $Label -Font $bold -ForeColor $textColor
     $desc = $null
     if ($Description) {
         $desc = New-Label -Text $Description -ForeColor $hintColor
@@ -289,53 +291,26 @@ function Add-FieldRow {
     $main.Controls.Add($container)
 }
 
-# Campos
-$txtName = New-TextBox -Text "" -Placeholder "MiApp" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+# Campos principales
+$txtName = New-TextBox -Text "" -Placeholder "MiApp" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
 Add-FieldRow -Label "Nombre de la app (ID)" -Description "Se usa como carpeta: apps/<ID> y data/<ID>." -InputControl $txtName
 
-$txtInstaller = New-TextBox -Text "" -Placeholder "Selecciona instalador .exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtInstaller = New-TextBox -Text "" -Placeholder "Selecciona instalador .exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
 $btnBrowse = New-Object System.Windows.Forms.Button
 $btnBrowse.Text = "Examinar..."
 $btnBrowse.FlatStyle = 'Flat'
 $btnBrowse.BackColor = $currentTheme.ButtonBack
-$btnBrowse.ForeColor = $currentTheme.TextColor
+$btnBrowse.ForeColor = $textColor
 $btnBrowse.Margin = '6,3,3,3'
 Add-FieldRow -Label "Instalador (.exe) a importar" -Description "Se copiara a installers/<ID>.exe" -InputControl $txtInstaller -ButtonControl $btnBrowse
 
-$txtArgs = New-TextBox -Text "" -Placeholder "Extra args (opcional)" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
-Add-FieldRow -Label "Parametros extra (opcional)" -Description "Se agregarán después de las opciones marcadas. Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -InputControl $txtArgs
+$txtArgs = New-TextBox -Text "" -Placeholder "Extra args (opcional)" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+Add-FieldRow -Label "Parámetros extra (opcional)" -Description "Se agregarán después de las opciones marcadas. Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -InputControl $txtArgs
 
-# Checkboxes para flags comunes (Inno Setup)
-$checksPanel = New-Object System.Windows.Forms.FlowLayoutPanel
-$checksPanel.AutoSize = $true
-$checksPanel.Dock = 'Top'
-$checksPanel.FlowDirection = 'LeftToRight'
-$checksPanel.WrapContents = $true
-$checksPanel.Margin = '0,0,0,10'
-
-function New-Check($text, [bool]$state) {
-    $cb = New-Object System.Windows.Forms.CheckBox
-    $cb.Text = $text
-    $cb.Checked = $state
-    $cb.AutoSize = $true
-    $cb.Margin = '0,0,10,5'
-    return $cb
-}
-
-$cbDir       = New-Check '/DIR="{BIN}"' $true
-$cbSilent    = New-Check '/VERYSILENT' $true
-$cbSuppress  = New-Check '/SUPPRESSMSGBOXES' $true
-$cbNoRestart = New-Check '/NORESTART' $true
-$cbSP        = New-Check '/SP-' $true
-$cbLog       = New-Check '/LOG="{DATA}\install.log"' $true
-$cbNoIcons   = New-Check '/MERGETASKS="!desktopicon,!startmenuicon"' $false
-$checksPanel.Controls.AddRange(@($cbDir,$cbSilent,$cbSuppress,$cbNoRestart,$cbSP,$cbLog,$cbNoIcons))
-$main.Controls.Add($checksPanel)
-
-$txtExe = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin\\MiApp.exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtExe = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin\\MiApp.exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
 Add-FieldRow -Label "Ejecutable relativo tras instalar" -Description "Ejemplo: apps\\MiApp\\bin\\MiApp.exe" -InputControl $txtExe
 
-$txtWD = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtWD = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
 Add-FieldRow -Label "WorkingDir relativo (opcional)" -Description "Por defecto, la carpeta del ejecutable." -InputControl $txtWD
 
 # Botones inferiores
@@ -354,7 +329,7 @@ $btnCancel.Width = 100
 $btnCancel.Height = 32
 $btnCancel.FlatStyle = 'Flat'
 $btnCancel.BackColor = $currentTheme.ButtonBack
-$btnCancel.ForeColor = $currentTheme.TextColor
+$btnCancel.ForeColor = $textColor
 
 $buttons = New-Object System.Windows.Forms.FlowLayoutPanel
 $buttons.FlowDirection = 'RightToLeft'
@@ -374,7 +349,7 @@ $ofd.Title = "Selecciona el instalador"
 $btnBrowse.Add_Click({
     if ($ofd.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         $txtInstaller.Text = $ofd.FileName
-        $txtInstaller.ForeColor = [System.Drawing.Color]::Black
+        $txtInstaller.ForeColor = $textColor
     }
 })
 
@@ -385,6 +360,8 @@ function Apply-Theme($name) {
     if (-not $t) { return }
     $form.BackColor = $t.BackColor
     $main.BackColor = $t.BackColor
+    $textColor = $t.TextColor
+    $hintColor = $t.HintColor
     foreach ($container in $main.Controls) {
         $container.BackColor = $t.BackColor
         foreach ($ctrl in $container.Controls) {
@@ -406,7 +383,13 @@ function Apply-Theme($name) {
                         $inner.ForeColor = $t.TextColor
                         if ($inner -eq $btnStart) { $inner.BackColor = $t.Accent; $inner.ForeColor = [System.Drawing.Color]::White }
                     }
+                    if ($inner -is [System.Windows.Forms.CheckBox]) {
+                        $inner.ForeColor = $t.TextColor
+                    }
                 }
+            }
+            if ($ctrl -is [System.Windows.Forms.CheckBox]) {
+                $ctrl.ForeColor = $t.TextColor
             }
         }
     }
@@ -441,11 +424,11 @@ function Save-Catalog([string]$path, $entries) {
 $btnStart.Add_Click({
     try {
         $appNameRaw = $txtName.Text.Trim()
-        if (-not $appNameRaw -or $txtName.ForeColor -eq [System.Drawing.Color]::Gray) { throw "Ingresa un nombre de app." }
+        if (-not $appNameRaw -or $txtName.ForeColor -eq $hintColor) { throw "Ingresa un nombre de app." }
         $appName = Sanitize-Name $appNameRaw
 
         $installerSrc = $txtInstaller.Text.Trim()
-        if (-not $installerSrc -or -not (Test-Path -LiteralPath $installerSrc) -or $txtInstaller.ForeColor -eq [System.Drawing.Color]::Gray) {
+        if (-not $installerSrc -or -not (Test-Path -LiteralPath $installerSrc) -or $txtInstaller.ForeColor -eq $hintColor) {
             throw "Selecciona un instalador valido."
         }
 
@@ -456,16 +439,29 @@ $btnStart.Add_Click({
         if ($cbNoRestart.Checked) { $argList += '/NORESTART' }
         if ($cbSP.Checked)        { $argList += '/SP-' }
         if ($cbLog.Checked)       { $argList += '/LOG="{DATA}\install.log"' }
-        if ($cbNoIcons.Checked)   { $argList += '/MERGETASKS="!desktopicon,!startmenuicon"' }
+        if ($cbNoIcons.Checked)   { $argList += '/NOICONS' }
+        if ($cbMergeNoIcons.Checked) { $argList += '/MERGETASKS="!desktopicon,!startmenuicon"' }
+        if ($cbCurrentUser.Checked) { $argList += '/CURRENTUSER' }
+        if ($cbAllUsers.Checked)    { $argList += '/ALLUSERS' }
+        if ($cbNoCancel.Checked)    { $argList += '/NOCANCEL' }
+        if ($cbNoClose.Checked)     { $argList += '/NOCLOSEAPPLICATIONS' }
+        if ($cbCloseApps.Checked)   { $argList += '/CLOSEAPPLICATIONS' }
+        if ($cbForceClose.Checked)  { $argList += '/FORCECLOSEAPPLICATIONS' }
+        if ($cbLoadInf.Checked -and $txtLoadInf.Text.Trim()) { $argList += "/LOADINF=""$($txtLoadInf.Text.Trim())""" }
+        if ($cbSaveInf.Checked -and $txtSaveInf.Text.Trim()) { $argList += "/SAVEINF=""$($txtSaveInf.Text.Trim())""" }
+        if ($txtLang.Text.Trim())        { $argList += "/LANG=""$($txtLang.Text.Trim())""" }
+        if ($txtTasks.Text.Trim())       { $argList += "/TASKS=""$($txtTasks.Text.Trim())""" }
+        if ($txtComponents.Text.Trim())  { $argList += "/COMPONENTS=""$($txtComponents.Text.Trim())""" }
         $extra = $txtArgs.Text.Trim()
-        if ($extra -and $txtArgs.ForeColor -ne [System.Drawing.Color]::Gray) { $argList += $extra }
+        if ($extra -and $txtArgs.ForeColor -ne $hintColor) { $argList += $extra }
         $installerArgs = ($argList -join ' ').Trim()
+
         $exeRel = $txtExe.Text.Trim()
-        if (-not $exeRel -or $txtExe.ForeColor -eq [System.Drawing.Color]::Gray) {
+        if (-not $exeRel -or $txtExe.ForeColor -eq $hintColor) {
             $exeRel = "apps/$appName/bin/$appName.exe"
         }
         $wdRel = $txtWD.Text.Trim()
-        if (-not $wdRel -or $txtWD.ForeColor -eq [System.Drawing.Color]::Gray) {
+        if (-not $wdRel -or $txtWD.ForeColor -eq $hintColor) {
             $wdRel = Split-Path -Parent $exeRel
         }
 
