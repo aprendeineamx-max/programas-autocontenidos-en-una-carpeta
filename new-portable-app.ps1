@@ -25,13 +25,13 @@ function Get-Themes {
             BorderColor = [System.Drawing.Color]::FromArgb(60,60,70)
         }
         "Dark" = @{
-            BackColor   = [System.Drawing.Color]::FromArgb(32,34,40)
-            PanelColor  = [System.Drawing.Color]::FromArgb(44,46,54)
-            TextColor   = [System.Drawing.Color]::FromArgb(235,237,240)
-            HintColor   = [System.Drawing.Color]::FromArgb(160,162,170)
-            Accent      = [System.Drawing.Color]::FromArgb(90,150,255)
-            ButtonBack  = [System.Drawing.Color]::FromArgb(60,62,70)
-            BorderColor = [System.Drawing.Color]::FromArgb(70,72,82)
+            BackColor   = [System.Drawing.Color]::FromArgb(28,30,36)
+            PanelColor  = [System.Drawing.Color]::FromArgb(42,44,52)
+            TextColor   = [System.Drawing.Color]::FromArgb(242,244,248)
+            HintColor   = [System.Drawing.Color]::FromArgb(180,182,190)
+            Accent      = [System.Drawing.Color]::FromArgb(100,155,255)
+            ButtonBack  = [System.Drawing.Color]::FromArgb(60,64,74)
+            BorderColor = [System.Drawing.Color]::FromArgb(85,88,98)
         }
         "Claro" = @{
             BackColor   = [System.Drawing.Color]::White
@@ -149,6 +149,96 @@ $title.MaximumSize = New-Object System.Drawing.Size(700,0)
 $title.Margin = '3,3,3,8'
 $main.Controls.Add($themePanel)
 $main.Controls.Add($title)
+
+# Panel de checks (flags comunes)
+$checksPanel = New-Object System.Windows.Forms.FlowLayoutPanel
+$checksPanel.AutoSize = $true
+$checksPanel.Dock = 'Top'
+$checksPanel.FlowDirection = 'LeftToRight'
+$checksPanel.WrapContents = $true
+$checksPanel.Margin = '0,0,0,5'
+
+function New-Check($text, [bool]$state) {
+    $cb = New-Object System.Windows.Forms.CheckBox
+    $cb.Text = $text
+    $cb.Checked = $state
+    $cb.AutoSize = $true
+    $cb.Margin = '0,0,10,5'
+    return $cb
+}
+
+$cbDir       = New-Check '/DIR="{BIN}"' $true
+$cbSilent    = New-Check '/VERYSILENT' $true
+$cbSuppress  = New-Check '/SUPPRESSMSGBOXES' $true
+$cbNoRestart = New-Check '/NORESTART' $true
+$cbSP        = New-Check '/SP-' $true
+$cbLog       = New-Check '/LOG="{DATA}\install.log"' $true
+$cbNoIcons   = New-Check '/NOICONS' $false
+$cbMergeNoIcons = New-Check '/MERGETASKS="!desktopicon,!startmenuicon"' $false
+$cbCurrentUser = New-Check '/CURRENTUSER' $false
+$cbNoCancel  = New-Check '/NOCANCEL' $false
+$cbNoClose   = New-Check '/NOCLOSEAPPLICATIONS' $false
+$checksPanel.Controls.AddRange(@(
+    $cbDir,$cbSilent,$cbSuppress,$cbNoRestart,$cbSP,$cbLog,
+    $cbNoIcons,$cbMergeNoIcons,$cbCurrentUser,$cbNoCancel,$cbNoClose
+))
+
+# Panel avanzado (lang/tasks/components/inf)
+$advancedPanel = New-Object System.Windows.Forms.TableLayoutPanel
+$advancedPanel.ColumnCount = 2
+$advancedPanel.RowCount = 4
+$advancedPanel.AutoSize = $true
+$advancedPanel.Dock = 'Top'
+$advancedPanel.Margin = '0,0,0,10'
+$advancedPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Absolute',150)))
+$advancedPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Percent',100)))
+
+function Add-AdvancedRow($label,$control) {
+    $r = $advancedPanel.RowCount - 1
+    $advancedPanel.Controls.Add((New-Label -Text $label -ForeColor $hintColor),0,$r)
+    $control.Dock = 'Fill'
+    $advancedPanel.Controls.Add($control,1,$r)
+    $advancedPanel.RowCount += 1
+}
+
+$txtLang = New-TextBox -Text "" -Placeholder "es" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtTasks = New-TextBox -Text "" -Placeholder "task1,task2" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtComponents = New-TextBox -Text "" -Placeholder "comp1,comp2" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtLoadInf = New-TextBox -Text "" -Placeholder "ruta\\setup.inf" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$txtSaveInf = New-TextBox -Text "" -Placeholder "ruta\\respuesta.inf" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+$cbLoadInf = New-Check '/LOADINF' $false
+$cbSaveInf = New-Check '/SAVEINF' $false
+
+Add-AdvancedRow "LANG (si aplica):" $txtLang
+Add-AdvancedRow "TASKS (si aplica):" $txtTasks
+Add-AdvancedRow "COMPONENTS (si aplica):" $txtComponents
+
+$loadPanel = New-Object System.Windows.Forms.TableLayoutPanel
+$loadPanel.ColumnCount = 2
+$loadPanel.RowCount = 1
+$loadPanel.AutoSize = $true
+$loadPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Absolute',80)))
+$loadPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Percent',100)))
+$loadPanel.Controls.Add($cbLoadInf,0,0)
+$loadPanel.Controls.Add($txtLoadInf,1,0)
+
+$savePanel = New-Object System.Windows.Forms.TableLayoutPanel
+$savePanel.ColumnCount = 2
+$savePanel.RowCount = 1
+$savePanel.AutoSize = $true
+$savePanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Absolute',80)))
+$savePanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Percent',100)))
+$savePanel.Controls.Add($cbSaveInf,0,0)
+$savePanel.Controls.Add($txtSaveInf,1,0)
+
+Add-AdvancedRow "LOADINF (opcional):" $loadPanel
+Add-AdvancedRow "SAVEINF (opcional):" $savePanel
+
+$infoFlags = New-Label -Text "Opciones recomendadas ya vienen marcadas. Avanzadas (LANG/TASKS/COMPONENTS/LOADINF/SAVEINF) úsalo solo si el instalador las soporta." -ForeColor $hintColor
+$infoFlags.MaximumSize = New-Object System.Drawing.Size(700,0)
+$main.Controls.Add($infoFlags)
+$main.Controls.Add($checksPanel)
+$main.Controls.Add($advancedPanel)
 
 function Add-FieldRow {
     param(
