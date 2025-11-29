@@ -23,6 +23,15 @@ function Get-Themes {
             ButtonBack  = [System.Drawing.Color]::FromArgb(46,50,60)
             BorderColor = [System.Drawing.Color]::FromArgb(60,60,70)
         }
+        "Dark" = @{
+            BackColor   = [System.Drawing.Color]::FromArgb(32,34,40)
+            PanelColor  = [System.Drawing.Color]::FromArgb(44,46,54)
+            TextColor   = [System.Drawing.Color]::FromArgb(235,237,240)
+            HintColor   = [System.Drawing.Color]::FromArgb(160,162,170)
+            Accent      = [System.Drawing.Color]::FromArgb(90,150,255)
+            ButtonBack  = [System.Drawing.Color]::FromArgb(60,62,70)
+            BorderColor = [System.Drawing.Color]::FromArgb(70,72,82)
+        }
         "Claro" = @{
             BackColor   = [System.Drawing.Color]::White
             PanelColor  = [System.Drawing.Color]::FromArgb(245,245,245)
@@ -105,7 +114,7 @@ $form.MinimizeBox = $true
 $form.Font = New-Object System.Drawing.Font('Segoe UI', 9)
 
 $themes = Get-Themes
-$currentTheme = $themes["Deep Obsidian"]
+$currentTheme = $themes["Dark"]
 
 $main = New-Object System.Windows.Forms.TableLayoutPanel
 $main.Dock = 'Fill'
@@ -129,7 +138,7 @@ $cmbTheme = New-Object System.Windows.Forms.ComboBox
 $cmbTheme.DropDownStyle = 'DropDownList'
 $cmbTheme.Width = 180
 $cmbTheme.Items.AddRange($themes.Keys)
-$cmbTheme.SelectedItem = "Deep Obsidian"
+$cmbTheme.SelectedItem = "Dark"
 $themePanel.Controls.Add($lblTheme)
 $themePanel.Controls.Add($cmbTheme)
 
