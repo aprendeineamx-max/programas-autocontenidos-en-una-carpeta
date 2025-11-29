@@ -10,26 +10,19 @@ Initialize-PortableRoot | Out-Null
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# Args por defecto (Inno Setup): ubicación, silencio, sin reinicio, sin splash, con log en data/<App>
 $defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /LOG="{DATA}\install.log"'
 
 function Get-Themes {
     return @{
-        "Deep Obsidian" = @{
-            BackColor   = [System.Drawing.Color]::FromArgb(26,28,34)
-            PanelColor  = [System.Drawing.Color]::FromArgb(38,40,48)
-            TextColor   = [System.Drawing.Color]::FromArgb(230,232,236)
-            HintColor   = [System.Drawing.Color]::FromArgb(140,140,150)
-            Accent      = [System.Drawing.Color]::FromArgb(88,140,255)
-            ButtonBack  = [System.Drawing.Color]::FromArgb(46,50,60)
-        }
         "Dark" = @{
-            BackColor   = [System.Drawing.Color]::FromArgb(30,32,38)
-            PanelColor  = [System.Drawing.Color]::FromArgb(42,44,52)
-            TextColor   = [System.Drawing.Color]::FromArgb(242,244,248)
+            BackColor   = [System.Drawing.Color]::FromArgb(28,30,36)
+            PanelColor  = [System.Drawing.Color]::FromArgb(40,42,50)
+            TextColor   = [System.Drawing.Color]::FromArgb(240,242,248)
             HintColor   = [System.Drawing.Color]::FromArgb(175,177,185)
             Accent      = [System.Drawing.Color]::FromArgb(96,152,255)
-            ButtonBack  = [System.Drawing.Color]::FromArgb(62,64,74)
+            ButtonBack  = [System.Drawing.Color]::FromArgb(60,64,74)
+            BorderColor = [System.Drawing.Color]::FromArgb(90,92,100)
+            SectionBack = [System.Drawing.Color]::FromArgb(36,38,46)
         }
         "Claro" = @{
             BackColor   = [System.Drawing.Color]::White
@@ -38,6 +31,8 @@ function Get-Themes {
             HintColor   = [System.Drawing.Color]::FromArgb(110,110,110)
             Accent      = [System.Drawing.Color]::FromArgb(70,120,255)
             ButtonBack  = [System.Drawing.Color]::FromArgb(235,235,235)
+            BorderColor = [System.Drawing.Color]::FromArgb(210,210,210)
+            SectionBack = [System.Drawing.Color]::FromArgb(250,250,250)
         }
         "Gris" = @{
             BackColor   = [System.Drawing.Color]::FromArgb(232,232,236)
@@ -46,6 +41,8 @@ function Get-Themes {
             HintColor   = [System.Drawing.Color]::FromArgb(120,120,130)
             Accent      = [System.Drawing.Color]::FromArgb(64,96,180)
             ButtonBack  = [System.Drawing.Color]::FromArgb(220,220,225)
+            BorderColor = [System.Drawing.Color]::FromArgb(200,200,205)
+            SectionBack = [System.Drawing.Color]::FromArgb(248,248,250)
         }
     }
 }
@@ -103,9 +100,10 @@ function New-TextBox {
     return $tb
 }
 
+# Form
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
-$form.Size = New-Object System.Drawing.Size(920,640)
+$form.Size = New-Object System.Drawing.Size(960,640)
 $form.StartPosition = 'CenterScreen'
 $form.FormBorderStyle = 'Sizable'
 $form.MaximizeBox = $true
@@ -117,20 +115,19 @@ $currentTheme = $themes["Dark"]
 $textColor = $currentTheme.TextColor
 $hintColor = $currentTheme.HintColor
 
-$main = New-Object System.Windows.Forms.TableLayoutPanel
+# Contenedor general (vertical)
+$main = New-Object System.Windows.Forms.FlowLayoutPanel
 $main.Dock = 'Fill'
-$main.ColumnCount = 1
-$main.RowCount = 1
-$main.Padding = '12,12,12,12'
 $main.AutoScroll = $true
-$main.AutoSize = $true
-$main.GrowStyle = 'AddRows'
+$main.WrapContents = $false
+$main.FlowDirection = 'TopDown'
+$main.Padding = '12,12,12,12'
+$main.BackColor = $currentTheme.BackColor
 
 $bold = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Bold)
 
 # Panel de tema
 $themePanel = New-Object System.Windows.Forms.FlowLayoutPanel
-$themePanel.Dock = 'Top'
 $themePanel.AutoSize = $true
 $themePanel.Margin = '0,0,0,10'
 $lblTheme = New-Label -Text "Tema:" -Font $bold -ForeColor $textColor
@@ -141,30 +138,72 @@ $cmbTheme.Items.AddRange($themes.Keys)
 $cmbTheme.SelectedItem = "Dark"
 $themePanel.Controls.Add($lblTheme)
 $themePanel.Controls.Add($cmbTheme)
-
-# Título principal
-$title = New-Label -Text "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..." -Font $bold -ForeColor $textColor
-$title.MaximumSize = New-Object System.Drawing.Size(880,0)
-$title.Margin = '3,3,3,8'
 $main.Controls.Add($themePanel)
-$main.Controls.Add($title)
 
-# Checkboxes helpers
+# Sección helper
+function New-Section {
+    param(
+        [string]$Title,
+        [System.Windows.Forms.Control[]]$Content
+    )
+    $grp = New-Object System.Windows.Forms.Panel
+    $grp.Width = 900
+    $grp.AutoSize = $true
+    $grp.BorderStyle = 'FixedSingle'
+    $grp.BackColor = $currentTheme.SectionBack
+    $grp.Padding = '10,8,10,10'
+
+    $titleLbl = New-Label -Text $Title -Font $bold -ForeColor $textColor
+    $titleLbl.Margin = '0,0,0,6'
+    $grp.Controls.Add($titleLbl)
+    foreach ($c in $Content) {
+        $c.Dock = 'Top'
+        $grp.Controls.Add($c)
+    }
+    $grp.Controls.SetChildIndex($titleLbl,0)
+    return $grp
+}
+
+# Campos principales (ejecutable y nombre)
+$txtInstaller = New-TextBox -Text "" -Placeholder "Selecciona instalador .exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+$btnBrowse = New-Object System.Windows.Forms.Button
+$btnBrowse.Text = "Examinar..."
+$btnBrowse.FlatStyle = 'Flat'
+$btnBrowse.BackColor = $currentTheme.ButtonBack
+$btnBrowse.ForeColor = $textColor
+$btnBrowse.Width = 110
+$rowInstaller = New-Object System.Windows.Forms.TableLayoutPanel
+$rowInstaller.ColumnCount = 2
+$rowInstaller.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Percent', 100)))
+$rowInstaller.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Absolute', 120)))
+$rowInstaller.AutoSize = $true
+$rowInstaller.Controls.Add($txtInstaller,0,0)
+$rowInstaller.Controls.Add($btnBrowse,1,0)
+$rowInstaller.Margin = '0,0,0,6'
+
+$lblInstallerDesc = New-Label -Text "Se copiara a installers/<ID>.exe" -ForeColor $hintColor
+$installerSection = New-Section -Title "Instalador (.exe) a importar" -Content @($rowInstaller,$lblInstallerDesc)
+
+$txtName = New-TextBox -Text "" -Placeholder "MiApp" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+$lblNameDesc = New-Label -Text "Se usa como carpeta: apps/<ID> y data/<ID>." -ForeColor $hintColor
+$nameSection = New-Section -Title "Nombre de la app (ID)" -Content @($txtName,$lblNameDesc)
+
+# Sección flags y parámetros
+$checksPanel = New-Object System.Windows.Forms.FlowLayoutPanel
+$checksPanel.AutoSize = $true
+$checksPanel.FlowDirection = 'LeftToRight'
+$checksPanel.WrapContents = $true
+$checksPanel.Margin = '0,0,0,5'
+
 function New-Check($text, [bool]$state) {
     $cb = New-Object System.Windows.Forms.CheckBox
     $cb.Text = $text
     $cb.Checked = $state
     $cb.AutoSize = $true
     $cb.Margin = '0,0,10,5'
+    $cb.ForeColor = $textColor
     return $cb
 }
-
-$checksPanel = New-Object System.Windows.Forms.FlowLayoutPanel
-$checksPanel.AutoSize = $true
-$checksPanel.Dock = 'Top'
-$checksPanel.FlowDirection = 'LeftToRight'
-$checksPanel.WrapContents = $true
-$checksPanel.Margin = '0,0,0,5'
 
 $cbDir       = New-Check '/DIR="{BIN}"' $true
 $cbSilent    = New-Check '/VERYSILENT' $true
@@ -185,19 +224,24 @@ $checksPanel.Controls.AddRange(@(
     $cbNoIcons,$cbMergeNoIcons,$cbCurrentUser,$cbAllUsers,$cbNoCancel,$cbNoClose,$cbCloseApps,$cbForceClose
 ))
 
-# Panel avanzado (lang/tasks/components/inf)
+$txtArgs = New-TextBox -Text "" -Placeholder "Extra args (opcional)" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
+$lblArgsDesc = New-Label -Text "Se agregaran después de las opciones marcadas. Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -ForeColor $hintColor
+$flagsSection = New-Section -Title "Flags y parámetros" -Content @($checksPanel,$txtArgs,$lblArgsDesc)
+
+# Sección avanzada
 $advancedPanel = New-Object System.Windows.Forms.TableLayoutPanel
 $advancedPanel.ColumnCount = 2
 $advancedPanel.RowCount = 4
 $advancedPanel.AutoSize = $true
 $advancedPanel.Dock = 'Top'
-$advancedPanel.Margin = '0,0,0,10'
-$advancedPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Absolute',150)))
+$advancedPanel.Margin = '0,0,0,5'
+$advancedPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Absolute',160)))
 $advancedPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Percent',100)))
 
 function Add-AdvancedRow($label,$control) {
     $r = $advancedPanel.RowCount - 1
-    $advancedPanel.Controls.Add((New-Label -Text $label -ForeColor $hintColor),0,$r)
+    $lbl = New-Label -Text $label -ForeColor $hintColor
+    $advancedPanel.Controls.Add($lbl,0,$r)
     $control.Dock = 'Fill'
     $advancedPanel.Controls.Add($control,1,$r)
     $advancedPanel.RowCount += 1
@@ -236,88 +280,32 @@ $savePanel.Controls.Add($txtSaveInf,1,0)
 Add-AdvancedRow "LOADINF (opcional):" $loadPanel
 Add-AdvancedRow "SAVEINF (opcional):" $savePanel
 
-$infoFlags = New-Label -Text "Opciones recomendadas ya vienen marcadas. Avanzadas (LANG/TASKS/COMPONENTS/LOADINF/SAVEINF) solo si el instalador las soporta. /ALLUSERS o /CURRENTUSER según se requiera; /NOICONS y /MERGETASKS para evitar accesos directos; /NOCANCEL y /NOCLOSEAPPLICATIONS solo si quieres forzar sin intervención; /CLOSEAPPLICATIONS y /FORCECLOSEAPPLICATIONS reinician procesos, úsalo con cautela." -ForeColor $hintColor
+$infoFlags = New-Label -Text "Recomendadas ya marcadas. Avanzadas (LANG/TASKS/COMPONENTS/LOADINF/SAVEINF) solo si el instalador las soporta. /ALLUSERS o /CURRENTUSER según se requiera; /NOICONS y /MERGETASKS para evitar accesos directos; /NOCANCEL y /NOCLOSEAPPLICATIONS para bloquear intervención; /CLOSEAPPLICATIONS /FORCECLOSEAPPLICATIONS reinician procesos: úsalo con cautela." -ForeColor $hintColor
 $infoFlags.MaximumSize = New-Object System.Drawing.Size(880,0)
-$main.Controls.Add($infoFlags)
-$main.Controls.Add($checksPanel)
-$main.Controls.Add($advancedPanel)
+$advancedSection = New-Section -Title "Opciones avanzadas" -Content @($infoFlags,$advancedPanel)
 
-function Add-FieldRow {
-    param(
-        [string]$Label,
-        [string]$Description,
-        [System.Windows.Forms.Control]$InputControl,
-        [System.Windows.Forms.Control]$ButtonControl = $null
-    )
-    $panel = New-Object System.Windows.Forms.TableLayoutPanel
-    $panel.ColumnCount = $(if ($ButtonControl) {2} else {1})
-    if ($ButtonControl) {
-        $panel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Percent', 100)))
-        $panel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Absolute', 110)))
-    } else {
-        $panel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle('Percent', 100)))
-    }
-    $panel.RowCount = 1
-    $panel.Dock = 'Top'
-    $panel.AutoSize = $true
-    $panel.Margin = '0,0,0,5'
-
-    if ($ButtonControl) {
-        $InputControl.Dock = 'Fill'
-        $ButtonControl.Dock = 'Fill'
-        $panel.Controls.Add($InputControl,0,0)
-        $panel.Controls.Add($ButtonControl,1,0)
-    } else {
-        $InputControl.Dock = 'Fill'
-        $panel.Controls.Add($InputControl,0,0)
-    }
-
-    $lbl = New-Label -Text $Label -Font $bold -ForeColor $textColor
-    $desc = $null
-    if ($Description) {
-        $desc = New-Label -Text $Description -ForeColor $hintColor
-    }
-
-    $container = New-Object System.Windows.Forms.TableLayoutPanel
-    $container.ColumnCount = 1
-    $container.RowCount = 3
-    $container.AutoSize = $true
-    $container.Dock = 'Top'
-    $container.Margin = '0,0,0,10'
-    $container.Controls.Add($lbl,0,0)
-    $container.Controls.Add($panel,0,1)
-    if ($desc) { $container.Controls.Add($desc,0,2) }
-
-    $main.Controls.Add($container)
-}
-
-# Campos principales
-$txtName = New-TextBox -Text "" -Placeholder "MiApp" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
-Add-FieldRow -Label "Nombre de la app (ID)" -Description "Se usa como carpeta: apps/<ID> y data/<ID>." -InputControl $txtName
-
-$txtInstaller = New-TextBox -Text "" -Placeholder "Selecciona instalador .exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
-$btnBrowse = New-Object System.Windows.Forms.Button
-$btnBrowse.Text = "Examinar..."
-$btnBrowse.FlatStyle = 'Flat'
-$btnBrowse.BackColor = $currentTheme.ButtonBack
-$btnBrowse.ForeColor = $textColor
-$btnBrowse.Margin = '6,3,3,3'
-Add-FieldRow -Label "Instalador (.exe) a importar" -Description "Se copiara a installers/<ID>.exe" -InputControl $txtInstaller -ButtonControl $btnBrowse
-
-$txtArgs = New-TextBox -Text "" -Placeholder "Extra args (opcional)" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
-Add-FieldRow -Label "Parámetros extra (opcional)" -Description "Se agregarán después de las opciones marcadas. Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -InputControl $txtArgs
-
+# Ejecutable/WD
 $txtExe = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin\\MiApp.exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
-Add-FieldRow -Label "Ejecutable relativo tras instalar" -Description "Ejemplo: apps\\MiApp\\bin\\MiApp.exe" -InputControl $txtExe
+$lblExeDesc = New-Label -Text "Ejemplo: apps\\MiApp\\bin\\MiApp.exe" -ForeColor $hintColor
+$exeSection = New-Section -Title "Ejecutable relativo tras instalar" -Content @($txtExe,$lblExeDesc)
 
 $txtWD = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $textColor
-Add-FieldRow -Label "WorkingDir relativo (opcional)" -Description "Por defecto, la carpeta del ejecutable." -InputControl $txtWD
+$lblWDDesc = New-Label -Text "Por defecto, la carpeta del ejecutable." -ForeColor $hintColor
+$wdSection = New-Section -Title "WorkingDir relativo (opcional)" -Content @($txtWD,$lblWDDesc)
+
+# Agregar secciones en orden: instalador y nombre primeros
+$main.Controls.Add($installerSection)
+$main.Controls.Add($nameSection)
+$main.Controls.Add($flagsSection)
+$main.Controls.Add($advancedSection)
+$main.Controls.Add($exeSection)
+$main.Controls.Add($wdSection)
 
 # Botones inferiores
 $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Iniciar instalacion portable"
-$btnStart.Width = 200
-$btnStart.Height = 32
+$btnStart.Width = 210
+$btnStart.Height = 34
 $btnStart.FlatStyle = 'Flat'
 $btnStart.BackColor = $currentTheme.Accent
 $btnStart.ForeColor = [System.Drawing.Color]::White
@@ -325,8 +313,8 @@ $btnStart.Font = $bold
 
 $btnCancel = New-Object System.Windows.Forms.Button
 $btnCancel.Text = "Cancelar"
-$btnCancel.Width = 100
-$btnCancel.Height = 32
+$btnCancel.Width = 110
+$btnCancel.Height = 34
 $btnCancel.FlatStyle = 'Flat'
 $btnCancel.BackColor = $currentTheme.ButtonBack
 $btnCancel.ForeColor = $textColor
@@ -334,8 +322,8 @@ $btnCancel.ForeColor = $textColor
 $buttons = New-Object System.Windows.Forms.FlowLayoutPanel
 $buttons.FlowDirection = 'RightToLeft'
 $buttons.Dock = 'Bottom'
-$buttons.Height = 50
-$buttons.Padding = '0,5,0,5'
+$buttons.Height = 60
+$buttons.Padding = '0,10,10,10'
 $buttons.Controls.Add($btnStart)
 $buttons.Controls.Add($btnCancel)
 
@@ -362,34 +350,39 @@ function Apply-Theme($name) {
     $main.BackColor = $t.BackColor
     $textColor = $t.TextColor
     $hintColor = $t.HintColor
-    foreach ($container in $main.Controls) {
-        $container.BackColor = $t.BackColor
-        foreach ($ctrl in $container.Controls) {
-            if ($ctrl -is [System.Windows.Forms.Label]) {
-                if ($ctrl.Font.Bold) { $ctrl.ForeColor = $t.TextColor } else { $ctrl.ForeColor = $t.HintColor }
-            }
-            if ($ctrl -is [System.Windows.Forms.TableLayoutPanel] -or $ctrl -is [System.Windows.Forms.FlowLayoutPanel]) {
-                $ctrl.BackColor = $t.BackColor
-                foreach ($inner in $ctrl.Controls) {
-                    if ($inner -is [System.Windows.Forms.TextBox]) {
-                        $inner.BackColor = $t.PanelColor
-                        if ($inner.ForeColor -ne [System.Drawing.Color]::Gray) { $inner.ForeColor = $t.TextColor }
-                    }
-                    if ($inner -is [System.Windows.Forms.Label]) {
-                        if ($inner.Font.Bold) { $inner.ForeColor = $t.TextColor } else { $inner.ForeColor = $t.HintColor }
-                    }
-                    if ($inner -is [System.Windows.Forms.Button]) {
-                        $inner.BackColor = $t.ButtonBack
-                        $inner.ForeColor = $t.TextColor
-                        if ($inner -eq $btnStart) { $inner.BackColor = $t.Accent; $inner.ForeColor = [System.Drawing.Color]::White }
-                    }
-                    if ($inner -is [System.Windows.Forms.CheckBox]) {
-                        $inner.ForeColor = $t.TextColor
+    foreach ($ctrl in $main.Controls) {
+        if ($ctrl -is [System.Windows.Forms.Panel]) {
+            $ctrl.BackColor = $t.SectionBack
+            foreach ($c in $ctrl.Controls) {
+                if ($c -is [System.Windows.Forms.Label]) {
+                    if ($c.Font.Bold) { $c.ForeColor = $t.TextColor } else { $c.ForeColor = $t.HintColor }
+                }
+                if ($c -is [System.Windows.Forms.TextBox]) {
+                    $c.BackColor = $t.PanelColor
+                    if ($c.ForeColor -ne $hintColor) { $c.ForeColor = $t.TextColor }
+                }
+                if ($c -is [System.Windows.Forms.CheckBox]) {
+                    $c.ForeColor = $t.TextColor
+                }
+                if ($c -is [System.Windows.Forms.TableLayoutPanel] -or $c -is [System.Windows.Forms.FlowLayoutPanel]) {
+                    $c.BackColor = $t.SectionBack
+                    foreach ($inner in $c.Controls) {
+                        if ($inner -is [System.Windows.Forms.TextBox]) {
+                            $inner.BackColor = $t.PanelColor
+                            if ($inner.ForeColor -ne $hintColor) { $inner.ForeColor = $t.TextColor }
+                        }
+                        if ($inner -is [System.Windows.Forms.Label]) {
+                            if ($inner.Font.Bold) { $inner.ForeColor = $t.TextColor } else { $inner.ForeColor = $t.HintColor }
+                        }
+                        if ($inner -is [System.Windows.Forms.CheckBox]) {
+                            $inner.ForeColor = $t.TextColor
+                        }
+                        if ($inner -is [System.Windows.Forms.Button]) {
+                            $inner.BackColor = $t.ButtonBack
+                            $inner.ForeColor = $t.TextColor
+                        }
                     }
                 }
-            }
-            if ($ctrl -is [System.Windows.Forms.CheckBox]) {
-                $ctrl.ForeColor = $t.TextColor
             }
         }
     }
@@ -397,6 +390,9 @@ function Apply-Theme($name) {
     $btnStart.ForeColor = [System.Drawing.Color]::White
     $btnCancel.BackColor = $t.ButtonBack
     $btnCancel.ForeColor = $t.TextColor
+    $cmbTheme.BackColor = $t.PanelColor
+    $cmbTheme.ForeColor = $t.TextColor
+    $themePanel.BackColor = $t.BackColor
 }
 
 $cmbTheme.Add_SelectedIndexChanged({
@@ -519,7 +515,6 @@ $btnStart.Add_Click({
     }
 })
 
-$cmbTheme.Add_SelectedIndexChanged({ Apply-Theme -name $cmbTheme.SelectedItem })
 Apply-Theme -name $cmbTheme.SelectedItem
 
 [void]$form.ShowDialog()
