@@ -108,7 +108,9 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
         $btn.FlatStyle = 'Flat'
         $btn.BackColor = [System.Drawing.Color]::FromArgb(235,239,247)
         $btn.Anchor = 'Top,Right'
-        $btn.Location = New-Object System.Drawing.Point($margin + $tbWidth + 10, $y.Value - 26 - 1)
+        $btnX = [int]$margin + [int]$tbWidth + 10
+        $btnY = [int]$y.Value - 27
+        $btn.Location = New-Object System.Drawing.Point($btnX, $btnY)
         $controls += $btn
     }
 
