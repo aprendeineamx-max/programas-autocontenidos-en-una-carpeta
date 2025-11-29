@@ -9,7 +9,6 @@ Initialize-PortableRoot | Out-Null
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName System.Drawing.Drawing2D
 
 $defaultArgs = '/DIR="{BIN}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
 $baseFont = New-Object System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Regular)
@@ -18,21 +17,23 @@ $hintColor = [System.Drawing.Color]::FromArgb(120,120,120)
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Nuevo programa portable"
-$form.Size = New-Object System.Drawing.Size(820, 620)
+$form.Size = New-Object System.Drawing.Size(740,540)
 $form.StartPosition = "CenterScreen"
-$form.FormBorderStyle = 'FixedDialog'
-$form.MaximizeBox = $false
-$form.MinimizeBox = $false
+$form.FormBorderStyle = 'Sizable'
+$form.MaximizeBox = $true
+$form.MinimizeBox = $true
 $form.Font = $baseFont
 
-# Gradiente de fondo
+# Fondo con gradiente
 $form.Add_Paint({
     param($sender,$e)
     $rect = $sender.ClientRectangle
-    $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,
+    $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush(
+        $rect,
         [System.Drawing.Color]::FromArgb(245,248,252),
         [System.Drawing.Color]::FromArgb(225,232,245),
-        90)
+        90
+    )
     $e.Graphics.FillRectangle($brush, $rect)
     $brush.Dispose()
 })
@@ -53,25 +54,29 @@ function New-Textbox($x,$y,$w) {
     $tb.BorderStyle = 'FixedSingle'
     $tb.BackColor = [System.Drawing.Color]::White
     $tb.Font = $baseFont
+    $tb.Anchor = 'Top,Left,Right'
     return $tb
 }
 
-# Campos
+# Layout base
+$margin = 20
+$gap = 16
 $y = 50
-$xLabel = 20
-$xBox = 20
-$wBox = 760
-$gap = 18
+$resizeTargets = @()
+
+# Título
+$title = New-Label "Carga un instalador y configura la app para que se instale en el sandbox (apps/<App>/bin) y guarde datos en data/<App>/..." ($margin) 15 $baseFontBold
+$title.MaximumSize = New-Object System.Drawing.Size(700,0)
 
 function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[switch]$HasButton) {
     $controls = @()
-    $lbl = New-Label $label $xLabel $($y.Value) $baseFontBold
+    $lbl = New-Label $label $margin $($y.Value) $baseFontBold
     $controls += $lbl
     $y.Value += $gap
 
-    $tbWidth = $wBox - 20
+    $tbWidth = ($form.ClientSize.Width - 2*$margin)
     if ($HasButton) { $tbWidth -= 140 }
-    $tb = New-Textbox $xBox $($y.Value) $tbWidth
+    $tb = New-Textbox $margin $($y.Value) $tbWidth
     $controls += $tb
 
     if ($placeholder) {
@@ -102,13 +107,14 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
         $btn.Height = 26
         $btn.FlatStyle = 'Flat'
         $btn.BackColor = [System.Drawing.Color]::FromArgb(235,239,247)
+        $btn.Anchor = 'Top,Right'
         $btn.Location = New-Object System.Drawing.Point($tb.Left + $tb.Width + 10, $tb.Top - 1)
         $controls += $btn
     }
 
     $y.Value += 28
     if ($desc) {
-        $descLbl = New-Label $desc $xLabel $($y.Value) $baseFont
+        $descLbl = New-Label $desc $margin $($y.Value) $baseFont
         $descLbl.ForeColor = $hintColor
         $controls += $descLbl
         $y.Value += 24
@@ -121,7 +127,7 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
 $nameField = Add-Field -label "Nombre de la app (ID)" -desc "Se usa como carpeta: apps/<ID> y data/<ID>." -placeholder "MiApp" -y ([ref]$y)
 $txtName = $nameField.TextBox
 
-$installerField = Add-Field -label "Instalador (.exe) a importar" -desc "Se copiará a installers/<ID>.exe" -placeholder "Selecciona un instalador .exe" -y ([ref]$y) -HasButton
+$installerField = Add-Field -label "Instalador (.exe) a importar" -desc "Se copiara a installers/<ID>.exe" -placeholder "Selecciona un instalador .exe" -y ([ref]$y) -HasButton
 $txtInstaller = $installerField.TextBox
 $btnInstaller = $installerField.Button
 
@@ -136,7 +142,16 @@ $txtExe = $exeField.TextBox
 $wdField = Add-Field -label "WorkingDir relativo (opcional)" -desc "Por defecto, la carpeta del ejecutable." -placeholder "apps\\MiApp\\bin" -y ([ref]$y)
 $txtWD = $wdField.TextBox
 
-# Botones
+# Registrar campos para resize
+$resizeTargets = @(
+    @{ TextBox = $txtName; Button = $null; HasButton = $false },
+    @{ TextBox = $txtInstaller; Button = $btnInstaller; HasButton = $true },
+    @{ TextBox = $txtArgs; Button = $null; HasButton = $false },
+    @{ TextBox = $txtExe; Button = $null; HasButton = $false },
+    @{ TextBox = $txtWD; Button = $null; HasButton = $false }
+)
+
+# Botones inferiores
 $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Iniciar instalacion portable"
 $btnStart.Width = 230
@@ -145,7 +160,6 @@ $btnStart.FlatStyle = 'Flat'
 $btnStart.BackColor = [System.Drawing.Color]::FromArgb(70,120,255)
 $btnStart.ForeColor = [System.Drawing.Color]::White
 $btnStart.Font = $baseFontBold
-$btnStart.Location = New-Object System.Drawing.Point($form.ClientSize.Width - 250, $form.ClientSize.Height - 80)
 $btnStart.Anchor = 'Bottom,Right'
 
 $btnCancel = New-Object System.Windows.Forms.Button
@@ -154,9 +168,31 @@ $btnCancel.Width = 120
 $btnCancel.Height = 32
 $btnCancel.FlatStyle = 'Flat'
 $btnCancel.BackColor = [System.Drawing.Color]::FromArgb(230,230,230)
-$btnCancel.Location = New-Object System.Drawing.Point($form.ClientSize.Width - 380, $form.ClientSize.Height - 80)
 $btnCancel.Anchor = 'Bottom,Right'
 
+function Resize-Layout {
+    $avail = $form.ClientSize.Width - 2*$margin
+    foreach ($item in $resizeTargets) {
+        $tb = $item.TextBox
+        $btn = $item.Button
+        $w = $avail
+        if ($item.HasButton -and $btn) { $w -= 140 }
+        $tb.Width = $w
+        if ($item.HasButton -and $btn) {
+            $btn.Left = $tb.Left + $tb.Width + 10
+            $btn.Top  = $tb.Top - 1
+        }
+    }
+    $btnStart.Left = $form.ClientSize.Width - $btnStart.Width - $margin
+    $btnStart.Top  = $form.ClientSize.Height - $btnStart.Height - $margin
+    $btnCancel.Left = $btnStart.Left - $btnCancel.Width - 10
+    $btnCancel.Top  = $btnStart.Top
+}
+
+$form.Add_Shown({ Resize-Layout })
+$form.Add_Resize({ Resize-Layout })
+
+# Agregar controles
 $form.Controls.AddRange(@($title))
 $form.Controls.AddRange($nameField.Controls)
 $form.Controls.AddRange($installerField.Controls)
