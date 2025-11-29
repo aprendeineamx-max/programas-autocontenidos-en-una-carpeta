@@ -212,8 +212,35 @@ $btnBrowse.ForeColor = $currentTheme.TextColor
 $btnBrowse.Margin = '6,3,3,3'
 Add-FieldRow -Label "Instalador (.exe) a importar" -Description "Se copiara a installers/<ID>.exe" -InputControl $txtInstaller -ButtonControl $btnBrowse
 
-$txtArgs = New-TextBox -Text $defaultArgs -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
-Add-FieldRow -Label "Parametros del instalador (/DIR={BIN} etc)" -Description "Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -InputControl $txtArgs
+$txtArgs = New-TextBox -Text "" -Placeholder "Extra args (opcional)" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
+Add-FieldRow -Label "Parametros extra (opcional)" -Description "Se agregarán después de las opciones marcadas. Tokens: {BIN}, {APPROOT}, {DATA}, {ROAMING}, {LOCAL}, {PROGRAMDATA}, {USERPROFILE}" -InputControl $txtArgs
+
+# Checkboxes para flags comunes (Inno Setup)
+$checksPanel = New-Object System.Windows.Forms.FlowLayoutPanel
+$checksPanel.AutoSize = $true
+$checksPanel.Dock = 'Top'
+$checksPanel.FlowDirection = 'LeftToRight'
+$checksPanel.WrapContents = $true
+$checksPanel.Margin = '0,0,0,10'
+
+function New-Check($text, [bool]$state) {
+    $cb = New-Object System.Windows.Forms.CheckBox
+    $cb.Text = $text
+    $cb.Checked = $state
+    $cb.AutoSize = $true
+    $cb.Margin = '0,0,10,5'
+    return $cb
+}
+
+$cbDir       = New-Check '/DIR="{BIN}"' $true
+$cbSilent    = New-Check '/VERYSILENT' $true
+$cbSuppress  = New-Check '/SUPPRESSMSGBOXES' $true
+$cbNoRestart = New-Check '/NORESTART' $true
+$cbSP        = New-Check '/SP-' $true
+$cbLog       = New-Check '/LOG="{DATA}\install.log"' $true
+$cbNoIcons   = New-Check '/MERGETASKS="!desktopicon,!startmenuicon"' $false
+$checksPanel.Controls.AddRange(@($cbDir,$cbSilent,$cbSuppress,$cbNoRestart,$cbSP,$cbLog,$cbNoIcons))
+$main.Controls.Add($checksPanel)
 
 $txtExe = New-TextBox -Text "" -Placeholder "apps\\MiApp\\bin\\MiApp.exe" -HintColor $hintColor -BackColor $currentTheme.PanelColor -TextColor $currentTheme.TextColor
 Add-FieldRow -Label "Ejecutable relativo tras instalar" -Description "Ejemplo: apps\\MiApp\\bin\\MiApp.exe" -InputControl $txtExe
@@ -332,7 +359,17 @@ $btnStart.Add_Click({
             throw "Selecciona un instalador valido."
         }
 
-        $installerArgs = $txtArgs.Text.Trim()
+        $argList = @()
+        if ($cbDir.Checked)       { $argList += '/DIR="{BIN}"' }
+        if ($cbSilent.Checked)    { $argList += '/VERYSILENT' }
+        if ($cbSuppress.Checked)  { $argList += '/SUPPRESSMSGBOXES' }
+        if ($cbNoRestart.Checked) { $argList += '/NORESTART' }
+        if ($cbSP.Checked)        { $argList += '/SP-' }
+        if ($cbLog.Checked)       { $argList += '/LOG="{DATA}\install.log"' }
+        if ($cbNoIcons.Checked)   { $argList += '/MERGETASKS="!desktopicon,!startmenuicon"' }
+        $extra = $txtArgs.Text.Trim()
+        if ($extra -and $txtArgs.ForeColor -ne [System.Drawing.Color]::Gray) { $argList += $extra }
+        $installerArgs = ($argList -join ' ').Trim()
         $exeRel = $txtExe.Text.Trim()
         if (-not $exeRel -or $txtExe.ForeColor -eq [System.Drawing.Color]::Gray) {
             $exeRel = "apps/$appName/bin/$appName.exe"
