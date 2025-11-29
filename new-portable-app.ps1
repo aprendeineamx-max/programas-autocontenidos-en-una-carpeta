@@ -101,6 +101,7 @@ function Add-Field([string]$label,[string]$desc,[string]$placeholder,[ref]$y,[sw
 
     $btn = $null
     if ($HasButton) {
+        if ($tb -is [System.Array]) { $tb = $tb | Select-Object -First 1 }
         $btn = New-Object System.Windows.Forms.Button
         $btn.Text = "Examinar..."
         $btn.Width = 120
